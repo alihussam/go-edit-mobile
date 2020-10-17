@@ -6,7 +6,6 @@ class Job {
   String title;
   String description;
   double budget;
-  String userRole;
   String createdAt;
   String updatedAt;
   User user;
@@ -17,7 +16,6 @@ class Job {
       this.title,
       this.description,
       this.budget,
-      this.userRole,
       this.createdAt,
       this.updatedAt,
       this.user});
@@ -29,7 +27,6 @@ class Job {
     description = json['description'];
     budget =
         json['budget'] != null ? double.parse(json['budget'].toString()) : null;
-    userRole = json['userRole'];
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
     user = json['user'] != null ? new User.fromJson(json['user']) : null;
@@ -42,7 +39,6 @@ class Job {
     data['title'] = this.title;
     data['description'] = this.description;
     data['budget'] = this.budget;
-    data['userRole'] = this.userRole;
     data['createdAt'] = this.createdAt;
     data['updatedAt'] = this.updatedAt;
     if (this.user != null) {

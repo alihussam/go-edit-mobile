@@ -21,6 +21,18 @@ mixin FieldValidators {
     return null;
   }
 
+  String validateJobTitle(String value) {
+    if (value.trim().length == 0 || value.trim().length > 20)
+      return "Job title is required and should not be greater than 20 characters";
+    return null;
+  }
+
+  String validateBio(String value) {
+    if (value.trim().length == 0 || value.trim().length > 250)
+      return "Bio is required and should not be greater than 250 characters";
+    return null;
+  }
+
   // String validatePhone(String value) {
   //   Pattern pattern = r'^(?:(([+]|00)92)|0)((3[0-6][0-9]))(\d{7})$';
   //   RegExp regExp = new RegExp(pattern);

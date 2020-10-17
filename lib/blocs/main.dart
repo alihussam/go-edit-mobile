@@ -65,6 +65,11 @@ class MainBloc {
     _authController.sink.add('HOME');
   }
 
+  /// update user profile
+  updateUserProfile(User user) {
+    _userProfileController.sink.add(user);
+  }
+
   /// change auth state, result in either login, home or onboarding screen
   changeAuthState(String authState) {
     _authController.sink.add(authState);

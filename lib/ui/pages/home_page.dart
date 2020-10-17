@@ -73,11 +73,10 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
               Container(
-                height: 60,
-                child: Flexible(
-                  child: Text(job.description),
-                ),
-              ),
+                  height: 65,
+                  child: Text(job.description.length <= 100
+                      ? job.description
+                      : job.description.substring(0, 140) + '...')),
               SizedBox(
                 height: 15,
               ),
@@ -139,7 +138,7 @@ class _HomePageState extends State<HomePage> {
     }
 
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 40, horizontal: 10),
+      padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
       child: Column(
         children: <Widget>[
           _buildHomePageHeader(),

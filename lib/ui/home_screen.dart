@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:goedit/blocs/home.dart';
 import 'package:goedit/ui/pages/home_page.dart';
+import 'package:goedit/ui/pages/profile_page.dart';
 import 'package:goedit/ui/widgets/loading.dart';
 import 'package:goedit/ui/widgets/minimal_drawer.dart';
 
@@ -13,8 +14,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<DrawerMenuOptionModel> _drawerOptions = [
     DrawerMenuOptionModel(
         'Home', Icons.home, () => homeBloc.changeActivePage(0)),
-    // DrawerMenuOptionModel(
-    //     'My Profile', Icons.account_circle, () => homeBloc.changeActivePage(1)),
+    DrawerMenuOptionModel(
+        'My Profile', Icons.account_circle, () => homeBloc.changeActivePage(1)),
   ];
 
   @override
@@ -33,11 +34,16 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final List<Widget> _pages = [
       HomePage(),
-      Container(
-        child: Text('Profile'),
-      )
+      ProfilePage(),
     ];
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0.0,
+        iconTheme: IconThemeData(
+          color: Theme.of(context).primaryColor,
+        ),
+      ),
       drawer: StreamBuilder(
         initialData: 0,
         stream: homeBloc.activePageIndex,

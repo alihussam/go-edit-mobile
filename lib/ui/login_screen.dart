@@ -5,6 +5,7 @@ import 'package:goedit/blocs/main.dart';
 import 'package:goedit/models/name.dart';
 import 'package:goedit/models/user.dart';
 import 'package:goedit/ui/widgets/curve.dart';
+import 'package:goedit/ui/widgets/inputs.dart';
 import 'package:goedit/utils/field_validators.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -55,27 +56,6 @@ class _LoginScreenState extends State<LoginScreen> with FieldValidators {
 
   @override
   Widget build(BuildContext context) {
-    Widget _buildFormField(
-        {@required String labelText,
-        @required Function onChanged,
-        Function validator,
-        bool obscureText = false}) {
-      return Container(
-        margin: EdgeInsets.symmetric(vertical: 12),
-        child: TextFormField(
-          onChanged: onChanged,
-          validator: validator,
-          obscureText: obscureText,
-          decoration: InputDecoration(
-              hintText: labelText,
-              labelText: labelText,
-              contentPadding:
-                  EdgeInsets.symmetric(vertical: 16, horizontal: 10),
-              border: OutlineInputBorder()),
-        ),
-      );
-    }
-
     Widget _buildAuthenticateButton() {
       return Container(
         margin: EdgeInsets.symmetric(vertical: 16),
@@ -151,11 +131,11 @@ class _LoginScreenState extends State<LoginScreen> with FieldValidators {
 
     // build login form
     List<Widget> _loginWidgets = [
-      _buildFormField(
+      buildFormField(
           labelText: 'Email',
           onChanged: (String value) => _email = value.trim().toLowerCase(),
           validator: (value) => validateEmail(value)),
-      _buildFormField(
+      buildFormField(
           labelText: 'Password',
           onChanged: (value) => _password = value,
           obscureText: true,
@@ -166,27 +146,27 @@ class _LoginScreenState extends State<LoginScreen> with FieldValidators {
     // build signup page
     List<Widget> _signupWidgets = [
       Container(
-        child: _buildFormField(
+        child: buildFormField(
             labelText: 'First Name',
             onChanged: (value) => _firstName = value.trim(),
             validator: (value) => validateRequired(value)),
       ),
       Container(
-        child: _buildFormField(
+        child: buildFormField(
           labelText: 'Middle Name',
           onChanged: (value) => _middleName = value.trim(),
           // validator: (value) => validateRequired(value)),
         ),
       ),
-      _buildFormField(
+      buildFormField(
           labelText: 'Last Name',
           onChanged: (value) => _lastName = value.trim(),
           validator: (value) => validateRequired(value)),
-      _buildFormField(
+      buildFormField(
           labelText: 'Email',
           onChanged: (value) => _email = value.trim().toLowerCase(),
           validator: (value) => validateEmail(value)),
-      _buildFormField(
+      buildFormField(
           labelText: 'Password',
           onChanged: (value) => _password = value,
           obscureText: true,

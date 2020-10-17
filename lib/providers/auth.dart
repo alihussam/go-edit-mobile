@@ -27,6 +27,9 @@ class AuthProv {
           jsonEncodedBody: json
               .encode({'role': 'USER', 'email': email, 'password': password}));
 
+      print('User Profile ***************');
+      print(data['data']['profile']);
+
       return {
         'profile': User.fromJson(data['data']['profile']),
         'accessToken': data['data']['token'],
