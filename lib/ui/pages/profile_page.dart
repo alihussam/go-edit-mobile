@@ -154,7 +154,7 @@ class _ProfilePageState extends State<ProfilePage> with FieldValidators {
           builder: (context, snapshot) {
             if (!snapshot.data) {
               return Text(
-                jobTitle,
+                jobTitle != null ? jobTitle : "(No Job Title)",
                 style: TextStyle(fontSize: 14, color: Colors.grey),
               );
             }
@@ -357,7 +357,7 @@ class _ProfilePageState extends State<ProfilePage> with FieldValidators {
                       height: 10,
                     ),
                     Text(
-                      bio,
+                      bio != null ? bio : '(No Bio Entered)',
                       style: TextStyle(fontSize: 12),
                     ),
                   ],

@@ -7,7 +7,7 @@ Widget buildFormField(
     Function validator,
     bool obscureText = false,
     String initialValue,
-    int maxLines}) {
+    int maxLines = 1}) {
   return Container(
     margin: EdgeInsets.symmetric(vertical: 12),
     child: TextFormField(
