@@ -19,7 +19,6 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> with FieldValidators {
   GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
   User updatedProfile = new User();
-  bool isLoading = false;
 
   @override
   void initState() {
@@ -63,19 +62,6 @@ class _ProfilePageState extends State<ProfilePage> with FieldValidators {
                               {
                                 if (_formKey.currentState.validate())
                                   {
-                                    // setState(() {
-                                    //   isLoading = true;
-                                    // }),
-                                    // profilePageBloc.isUpdatingProfile.listen(
-                                    //     (event) {
-                                    //   setState(() {
-                                    //     isLoading = false;
-                                    //   });
-                                    // }, onError: (error) {
-                                    //   setState(() {
-                                    //     isLoading = false;
-                                    //   });
-                                    // }),
                                     profilePageBloc
                                         .updateProfile(updatedProfile),
                                   }

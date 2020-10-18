@@ -10,6 +10,7 @@ import 'package:goedit/utils/request_exception.dart';
 import 'package:rxdart/subjects.dart';
 
 class MainBloc {
+  User user;
   FlutterSecureStorage _secureStorage = FlutterSecureStorage();
   GlobalKey<ScaffoldState> _key;
   // possible values for auth are HOME, ONBOARDING, LOGIN
@@ -18,6 +19,8 @@ class MainBloc {
 
   Stream<User> get userProfile => _userProfileController.stream;
   Stream<String> get auth => _authController.stream;
+
+  User get userProfileObject => user;
 
   /// init main bloc
   init(GlobalKey<ScaffoldState> key) => _key = key;
@@ -34,6 +37,7 @@ class MainBloc {
       } else {
         var data = await AuthRepo.getProfile();
         _userProfileController.sink.add(data['profile']);
+        user = data['profile'];
         _authController.sink.add('HOME');
       }
     } catch (exc) {
@@ -62,11 +66,13 @@ class MainBloc {
   /// login user
   authenticated(User user) {
     _userProfileController.sink.add(user);
+    this.user = user;
     _authController.sink.add('HOME');
   }
 
   /// update user profile
   updateUserProfile(User user) {
+    this.user = user;
     _userProfileController.sink.add(user);
   }
 

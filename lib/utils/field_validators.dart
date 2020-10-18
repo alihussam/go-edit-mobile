@@ -1,8 +1,8 @@
 // import 'package:flutter_masked_text/flutter_masked_text.dart';
 
 mixin FieldValidators {
-  String validateRequired(String name) {
-    if (name.trim().length < 3)
+  String validateRequired(String value) {
+    if (value.trim().length < 3)
       return 'This field is required';
     else
       return null;

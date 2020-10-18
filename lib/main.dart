@@ -3,6 +3,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:goedit/blocs/main.dart';
 import 'package:goedit/ui/home_screen.dart';
 import 'package:goedit/ui/login_screen.dart';
+import 'package:goedit/utils/global_navigation.dart';
 import 'package:minimal_onboarding/minimal_onboarding.dart';
 
 void main() => runApp(MyApp());
@@ -86,6 +87,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: 'Go Edit',
       debugShowCheckedModeBanner: false,
+      navigatorKey: GlobalNavigation.key,
       home: Scaffold(
         key: _key,
         body: _initialScreen(),

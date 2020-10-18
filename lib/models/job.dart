@@ -29,18 +29,20 @@ class Job {
         json['budget'] != null ? double.parse(json['budget'].toString()) : null;
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
-    user = json['user'] != null ? new User.fromJson(json['user']) : null;
+    if (!(json['user'] is String)) {
+      user = json['user'] != null ? new User.fromJson(json['user']) : null;
+    }
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['_id'] = this.sId;
-    data['currency'] = this.currency;
-    data['title'] = this.title;
-    data['description'] = this.description;
-    data['budget'] = this.budget;
-    data['createdAt'] = this.createdAt;
-    data['updatedAt'] = this.updatedAt;
+    if (this.sId != null) data['_id'] = this.sId;
+    if (this.currency != null) data['currency'] = this.currency;
+    if (this.title != null) data['title'] = this.title;
+    if (this.description != null) data['description'] = this.description;
+    if (this.budget != null) data['budget'] = this.budget;
+    if (this.createdAt != null) data['createdAt'] = this.createdAt;
+    if (this.updatedAt != null) data['updatedAt'] = this.updatedAt;
     if (this.user != null) {
       data['user'] = this.user.toJson();
     }

@@ -1,19 +1,19 @@
-import 'package:flappy_search_bar/flappy_search_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:goedit/blocs/home.dart';
+import 'package:goedit/blocs/job_page_bloc.dart';
 import 'package:goedit/ui/widgets/cards.dart';
 import 'package:goedit/ui/widgets/inputs.dart';
 import 'package:goedit/ui/widgets/loading.dart';
 
-class HomePage extends StatefulWidget {
+class JobPage extends StatefulWidget {
   @override
-  _HomePageState createState() => _HomePageState();
+  _JobPageState createState() => _JobPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _JobPageState extends State<JobPage> {
   @override
   void initState() {
-    homeBloc.getAllJobs();
+    jobPageBloc.init();
+    jobPageBloc.getAllJobs();
     super.initState();
   }
 
@@ -23,13 +23,13 @@ class _HomePageState extends State<HomePage> {
       return Expanded(
         child: StreamBuilder(
           initialData: false,
-          stream: homeBloc.isLoadingJobs,
+          stream: jobPageBloc.isLoadingJobs,
           builder: (context, snapshot) {
             if (snapshot.data) {
               return LoadSpinner();
             }
             return StreamBuilder(
-              stream: homeBloc.jobs,
+              stream: jobPageBloc.jobs,
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   if (snapshot.data.length == 0) {
@@ -51,16 +51,30 @@ class _HomePageState extends State<HomePage> {
       );
     }
 
+    Widget _buildCreateJobButton() {
+      return Container(
+        padding: EdgeInsets.only(top: 10),
+        child: FlatButton(
+          height: 40,
+          color: Theme.of(context).primaryColor,
+          child: Text('Create new job',
+              style: TextStyle(color: Colors.white, fontSize: 14)),
+          onPressed: () {},
+        ),
+      );
+    }
+
     return Container(
       padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           buildSearchBar(
               onSearch: (String searchString) async {
-                homeBloc.getAllJobs(searchString: searchString);
+                jobPageBloc.getAllJobs(searchString: searchString);
                 return [];
               },
-              onCancelled: () => homeBloc.getAllJobs()),
+              onCancelled: () => jobPageBloc.getAllJobs()),
           _buildJobList(),
         ],
       ),
