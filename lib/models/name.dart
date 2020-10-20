@@ -25,7 +25,7 @@ class Name {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     if (this.firstName != null) data['firstName'] = this.firstName;
-    if (this.middleName != null) {
+    if (this.middleName != null && this.middleName != '') {
       data['middleName'] = this.middleName;
     }
     if (this.lastName != null) data['lastName'] = this.lastName;

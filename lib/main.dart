@@ -88,6 +88,9 @@ class _MyAppState extends State<MyApp> {
       title: 'Go Edit',
       debugShowCheckedModeBanner: false,
       navigatorKey: GlobalNavigation.key,
+      theme: ThemeData(
+        primaryColor: Color(0xFFA837DF),
+      ),
       home: Scaffold(
         key: _key,
         body: _initialScreen(),

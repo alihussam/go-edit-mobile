@@ -1,4 +1,5 @@
 import 'package:flappy_search_bar/flappy_search_bar.dart';
+import 'package:flappy_search_bar/search_bar_style.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -52,14 +53,27 @@ Widget buildNumericOnlyFormField(
 }
 
 Widget buildSearchBar({
-  @required onSearch,
-  @required onCancelled,
+  @required Function onSearch,
+  @required Function onCancelled,
+  @required Color color,
   onItemFound,
 }) {
-  return Container(
-    height: 150,
-    padding: EdgeInsets.symmetric(vertical: 10),
-    child: SearchBar(
-        onSearch: onSearch, onCancelled: onCancelled, onItemFound: onItemFound),
+  return Card(
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(10.0),
+    ),
+    child: Container(
+      height: 100,
+      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+      child: SearchBar(
+          searchBarStyle: SearchBarStyle(
+            padding: EdgeInsets.all(8),
+            borderRadius: BorderRadius.circular(30.0),
+          ),
+          minimumChars: 1,
+          onSearch: onSearch,
+          onCancelled: onCancelled,
+          onItemFound: onItemFound),
+    ),
   );
 }

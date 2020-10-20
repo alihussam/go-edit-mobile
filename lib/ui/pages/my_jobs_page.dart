@@ -79,6 +79,7 @@ class _MyJobsPageState extends State<MyJobsPage> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           buildSearchBar(
+              color: Theme.of(context).primaryColor,
               onSearch: (String searchString) async {
                 myJobsPageBloc.getAllJobs(searchString: searchString);
                 return [];

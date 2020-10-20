@@ -51,25 +51,13 @@ class _JobPageState extends State<JobPage> {
       );
     }
 
-    Widget _buildCreateJobButton() {
-      return Container(
-        padding: EdgeInsets.only(top: 10),
-        child: FlatButton(
-          height: 40,
-          color: Theme.of(context).primaryColor,
-          child: Text('Create new job',
-              style: TextStyle(color: Colors.white, fontSize: 14)),
-          onPressed: () {},
-        ),
-      );
-    }
-
     return Container(
       padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           buildSearchBar(
+              color: Theme.of(context).primaryColor,
               onSearch: (String searchString) async {
                 jobPageBloc.getAllJobs(searchString: searchString);
                 return [];
