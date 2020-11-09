@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:goedit/blocs/create_new_job_page_bloc.dart';
 import 'package:goedit/models/job.dart';
@@ -33,7 +35,8 @@ class _CreateNewJobPageState extends State<CreateNewJobPage>
   Widget build(BuildContext context) {
     // attach a listener to pop on success
     createNewJobPageBloc.job.listen((event) {
-      GlobalNavigation.key.currentState.pop();
+      Timer(Duration(milliseconds: 500),
+          () => GlobalNavigation.key.currentState.pop());
     });
 
     Future<bool> _willPopCallBack() async {
