@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:goedit/blocs/home.dart';
 import 'package:goedit/ui/pages/home_page.dart';
 import 'package:goedit/ui/pages/jobs_page.dart';
+import 'package:goedit/ui/pages/my_assets_page.dart';
 import 'package:goedit/ui/pages/my_jobs_page.dart';
 import 'package:goedit/ui/pages/profile_page.dart';
 import 'package:goedit/ui/widgets/loading.dart';
@@ -34,14 +35,17 @@ class _HomeScreenState extends State<HomeScreen> {
           'Jobs', Icons.work, () => homeBloc.changeActivePage(1)),
       DrawerMenuOptionModel(
           'My Jobs', Icons.work_outline, () => homeBloc.changeActivePage(2)),
-      DrawerMenuOptionModel('My Profile', Icons.account_circle,
+      DrawerMenuOptionModel('My Assets', Icons.cloud_download,
           () => homeBloc.changeActivePage(3)),
+      DrawerMenuOptionModel('My Profile', Icons.account_circle,
+          () => homeBloc.changeActivePage(4)),
     ];
 
     final List<Widget> _pages = [
       HomePage(),
       JobPage(),
       MyJobsPage(),
+      MyAssetsPage(),
       ProfilePage(),
     ];
 

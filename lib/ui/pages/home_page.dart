@@ -1,6 +1,7 @@
 import 'package:flappy_search_bar/flappy_search_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:goedit/blocs/home.dart';
+import 'package:goedit/models/asset.dart';
 import 'package:goedit/ui/widgets/cards.dart';
 import 'package:goedit/ui/widgets/inputs.dart';
 import 'package:goedit/ui/widgets/loading.dart';
@@ -13,7 +14,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   void initState() {
-    homeBloc.getAllJobs();
+    // homeBloc.getAllJobs();
+    homeBloc.init();
+    homeBloc.getAllAssets();
     super.initState();
   }
 
@@ -248,16 +251,38 @@ class _HomePageState extends State<HomePage> {
             Container(
               margin: EdgeInsets.only(top: 20),
               height: 120,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  _buildAssetCard('Leet Ui Kit',
-                      "https://www.webdesignerdepot.com/cdn-origin/uploads/2015/02/015.jpg"),
-                  _buildAssetCard('3D Asset Characters',
-                      "https://i.pinimg.com/originals/1f/14/9a/1f149a35b5bc46839cabed5559970702.jpg"),
-                  _buildAssetCard('Low Poly Pack',
-                      "https://www.lowpolylab.net/wp-content/uploads/edd/2018/03/Low_Poly_Peoples_3D_Characters-1180x944.png"),
-                ],
+              child: StreamBuilder(
+                stream: homeBloc.assets,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    List<Asset> _assets =
+                        snapshot.data != null ? snapshot.data : [];
+                    if (_assets.length == 0) {
+                      return Center(
+                          child:
+                              Text('There are currently no assets available'));
+                    }
+                    return ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: _assets.length,
+                        itemBuilder: (context, index) {
+                          print("${index} found on array");
+                          return _buildAssetCard(
+                              _assets[index].title,
+                              _assets[index].imageUrls.length > 0
+                                  ? _assets[index].imageUrls[0]
+                                  : '');
+                        });
+                  }
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text('Some error occured'),
+                    );
+                  }
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                },
               ),
             ),
           ],

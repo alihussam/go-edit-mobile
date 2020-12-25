@@ -19,8 +19,11 @@ class RequestClient {
         newheaders.addAll(headers);
       }
       Uri finalUrl = Uri(
-        scheme: 'https',
-        host: 'goedit.herokuapp.com',
+        // scheme: 'https',
+        // host: 'goedit.herokuapp.com',
+        scheme: 'http',
+        host: '192.168.1.106',
+        port: 4041,
         path: 'api/$url',
         queryParameters: queryParams,
       );
@@ -58,7 +61,8 @@ class RequestClient {
       if (headers != null) {
         newheaders.addAll(headers);
       }
-      var res = await http.post('https://goedit.herokuapp.com/api/' + url,
+      // https://goedit.herokuapp.com/api/
+      var res = await http.post('http://192.168.1.106:4041/api/' + url,
           headers: newheaders,
           body: jsonEncodedBody != null ? jsonEncodedBody : null);
       // check if any error occured
