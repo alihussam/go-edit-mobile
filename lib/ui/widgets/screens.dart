@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:goedit/blocs/create_new_asset_page_bloc.dart';
-import 'package:goedit/models/asset.dart';
 import 'package:goedit/ui/widgets/cards.dart';
 import 'package:goedit/ui/widgets/inputs.dart';
 import 'package:goedit/ui/widgets/loading.dart';
@@ -10,59 +8,99 @@ import 'package:goedit/utils/field_validators.dart';
 import 'package:goedit/utils/global_navigation.dart';
 import 'package:image_picker/image_picker.dart';
 
+class FullWidthFormController {
+  Function(String message) showToast;
+  Function(bool isShowSuccess) changeCurrentScreen;
+  Function(bool isLoading) switchIsLoading;
+  bool Function() validateForm;
+}
+
+class FullWidthFormState {
+  String title;
+  String description;
+  double price;
+  String currency = 'PKR';
+  File singleImage;
+}
+
 class FullWidthFormScreen extends StatefulWidget {
+  @required
+  final FullWidthFormController fullWidthFormController;
+  final String headerTitle;
+  final String successScreenMessage;
+  final Function() onSuccessButtonPress;
+  final String actionButtonOneText;
+  final Function() onActionButtonOnePress;
+  final String actionButtonTwoText;
+  final Function() onActionButtonTwoPress;
+  final Function(FullWidthFormState formState) onValueChange;
+
+  FullWidthFormScreen({
+    this.headerTitle = 'Form',
+    this.fullWidthFormController,
+    this.successScreenMessage = 'Success',
+    this.onSuccessButtonPress,
+    this.actionButtonOneText = 'Save',
+    this.onActionButtonOnePress,
+    this.actionButtonTwoText = 'Cancel',
+    this.onActionButtonTwoPress,
+    this.onValueChange,
+  });
   @override
-  _FullWidthFormScreenState createState() => _FullWidthFormScreenState();
+  _FullWidthFormScreenState createState() =>
+      _FullWidthFormScreenState(fullWidthFormController);
 }
 
 class _FullWidthFormScreenState extends State<FullWidthFormScreen>
     with FieldValidators {
+  _FullWidthFormScreenState(FullWidthFormController _controller) {
+    _controller.showToast = showToast;
+    _controller.changeCurrentScreen = changeCurrentScreen;
+    _controller.switchIsLoading = switchIsLoading;
+    _controller.validateForm = validateForm;
+  }
+
+  FullWidthFormState _formState = FullWidthFormState();
+
   GlobalKey<ScaffoldState> _key = new GlobalKey<ScaffoldState>();
   GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
-  final _imagePicker = ImagePicker();
-  Asset _asset = new Asset(currency: 'PKR');
 
-  @override
-  void initState() {
-    createNewAssetPageBloc.init(_key);
-    super.initState();
+  StreamController<bool> _currentScreenController = StreamController<bool>();
+  StreamController<bool> _isLoadingController = StreamController<bool>();
+
+  // show toast on form screen
+  void showToast(String message) {
+    _key.currentState.showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  // switch between active screen, i.e form or success screen
+  void changeCurrentScreen(bool isShowSuccess) {
+    _currentScreenController.sink.add(isShowSuccess);
+  }
+
+  // switch between is screen loading
+  void switchIsLoading(bool isLoading) {
+    _isLoadingController.sink.add(isLoading);
+  }
+
+  // validate form
+  bool validateForm() => _formKey.currentState.validate();
+
+  // on single image input
+  void onSingleImageInput(File image) {
+    _formState.singleImage = image;
+    widget.onValueChange(_formState);
   }
 
   @override
   void dispose() {
-    createNewAssetPageBloc.dispose();
+    _isLoadingController.close();
+    _currentScreenController.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // pick image from camera
-    imageFromCamera() async {
-      PickedFile image = (await _imagePicker.getImage(
-          source: ImageSource.camera, imageQuality: 100));
-
-      setState(() {
-        if (image != null) {
-          _asset.imageFile = new File(image.path);
-        }
-      });
-    }
-
-    imageFromGallery() async {
-      PickedFile image = (await _imagePicker.getImage(
-          source: ImageSource.gallery, imageQuality: 100));
-
-      setState(() {
-        if (image != null) {
-          _asset.imageFile = new File(image.path);
-        }
-      });
-    }
-
-    Future<bool> _willPopCallBack() async {
-      return false;
-    }
-
     Widget _buildFormFields() {
       return Container(
         padding: EdgeInsets.symmetric(horizontal: 20.0),
@@ -74,22 +112,30 @@ class _FullWidthFormScreenState extends State<FullWidthFormScreen>
               buildFormField(
                   labelText: 'Title',
                   validator: (value) => validateRequired(value),
-                  onChanged: (value) => {_asset.title = value.trim()}),
+                  onChanged: (value) => {
+                        _formState.title = value.trim(),
+                        widget.onValueChange(_formState),
+                      }),
               buildFormField(
                   labelText: 'Description',
                   maxLines: 5,
                   validator: (value) => validateRequired(value),
-                  onChanged: (value) => {_asset.description = value.trim()}),
+                  onChanged: (value) => {
+                        _formState.description = value.trim(),
+                        widget.onValueChange(_formState)
+                      }),
               buildNumericOnlyFormField(
                   labelText: 'Price',
                   validator: (value) => validateRequired(value),
-                  onChanged: (String value) =>
-                      {_asset.price = double.parse(value.trim())}),
+                  onChanged: (String value) => {
+                        _formState.price = double.parse(
+                            value.trim(), widget.onValueChange(_formState))
+                      }),
               DropdownButton(
                   hint: Text('Currency'),
                   icon: Icon(Icons.money),
                   isExpanded: true,
-                  value: _asset.currency,
+                  value: _formState.currency,
                   items: ['PKR', 'USD']
                       .map((e) => DropdownMenuItem(
                             value: e,
@@ -98,26 +144,13 @@ class _FullWidthFormScreenState extends State<FullWidthFormScreen>
                       .toList(),
                   onChanged: (value) => {
                         setState(() {
-                          _asset.currency = value;
+                          _formState.currency = value;
+                          widget.onValueChange(_formState);
                         }),
-                        createNewAssetPageBloc
                       }),
-              Container(
-                child: OutlineButton(
-                  onPressed: () => imageFromGallery(),
-                  child: _asset.imageFile == null
-                      ? Container(
-                          padding: EdgeInsets.all(35),
-                          child: Center(
-                            child: Text('+ Add Conver Image'),
-                          ),
-                        )
-                      : Image.file(
-                          _asset.imageFile,
-                          fit: BoxFit.cover,
-                          height: 200,
-                        ),
-                ),
+              SingleImageInput(
+                placeHolderText: '+ Add Cover image',
+                onImageSelect: onSingleImageInput,
               ),
             ],
           ),
@@ -125,40 +158,37 @@ class _FullWidthFormScreenState extends State<FullWidthFormScreen>
       );
     }
 
+    // action button bar
     Widget _buildActionButtonBar() {
       return Container(
+        height: 80,
         padding: EdgeInsets.all(10),
         child: StreamBuilder(
           initialData: false,
-          stream: createNewAssetPageBloc.isCreatingAsset,
+          stream: _isLoadingController.stream,
           builder: (context, snapshot) {
             if (snapshot.data) {
-              return LoadSpinner(
-                size: 10,
-              );
+              return LoadSpinner(size: 10);
             }
             return Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Expanded(
                   child: FlatButton(
-                    child: Text('Save', style: TextStyle(color: Colors.white)),
+                    child: Text(widget.actionButtonOneText,
+                        style: TextStyle(color: Colors.white)),
                     color: Theme.of(context).primaryColor,
-                    onPressed: () {
-                      if (_formKey.currentState.validate()) {
-                        createNewAssetPageBloc.createAsset(_asset);
-                      }
-                    },
+                    onPressed: widget.onActionButtonOnePress,
                   ),
                 ),
                 SizedBox(width: 10),
                 Expanded(
                   child: OutlineButton(
-                    child: Text('Cancel',
+                    child: Text(widget.actionButtonTwoText,
                         style: TextStyle(
                           color: Theme.of(context).primaryColor,
                         )),
-                    onPressed: () => GlobalNavigation.key.currentState.pop(),
+                    onPressed: widget.onActionButtonTwoPress,
                   ),
                 ),
               ],
@@ -169,28 +199,32 @@ class _FullWidthFormScreenState extends State<FullWidthFormScreen>
     }
 
     return WillPopScope(
-      onWillPop: _willPopCallBack,
+      // prevent page from closing using back button
+      // page can only be used using cancel button
+      onWillPop: () async => false,
       child: SafeArea(
           child: StreamBuilder(
-        stream: createNewAssetPageBloc.asset,
+        stream: _currentScreenController.stream,
+        initialData: false,
         builder: (context, snapshot) {
-          // on creation success
-          if (snapshot.hasData) {
+          // on show success screen
+          if (snapshot.data) {
             return operationSuccessScafold(
-              successMessage: 'Successful',
-              onPressed: () => GlobalNavigation.key.currentState.pop(),
+              successMessage: widget.successScreenMessage,
+              onPressed: widget.onSuccessButtonPress,
             );
           }
-          // creation form
+          // form screen
           return Scaffold(
             key: _key,
-            bottomNavigationBar: Container(child: _buildActionButtonBar()),
+            bottomNavigationBar: _buildActionButtonBar(),
+            // form body
             body: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   headerContainerBottomCurve(
-                      'Create New Asset', Theme.of(context).primaryColor),
+                      widget.headerTitle, Theme.of(context).primaryColor),
                   _buildFormFields(),
                 ],
               ),

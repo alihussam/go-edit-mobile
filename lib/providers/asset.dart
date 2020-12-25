@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:goedit/models/asset.dart';
 import 'package:goedit/models/metaData.dart';
 import 'package:goedit/utils/request.dart';
@@ -10,12 +12,17 @@ class AssetProv {
     try {
       Map<String, String> headers = {'authorization': accessToken};
       Map<String, String> body = Map<String, String>();
+      List<File> files = List<File>();
+
+      if (asset.imageFile != null) {
+        files.add(asset.imageFile);
+      }
 
       // convert map to string, string
       asset.toJson().forEach((key, value) => body[key] = value?.toString());
 
       var data = await RequestClient.postMultiPart('asset/create',
-          headers: headers, payload: body, files: [asset.imageFile]);
+          headers: headers, payload: body, files: files);
 
       return {'asset': Asset.fromJson(data['data'])};
     } catch (exc) {

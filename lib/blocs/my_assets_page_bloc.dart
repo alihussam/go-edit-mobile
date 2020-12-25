@@ -9,15 +9,48 @@ class MyAssetsPageBloc {
   BehaviorSubject<bool> _isLoadingAssetsController;
   BehaviorSubject<MetaData> _assetsMetaDataController;
   BehaviorSubject<List<Asset>> _assetsController;
+  BehaviorSubject<bool> _isCreatingAssetController;
+  BehaviorSubject<Asset> _newAssetController;
+
   Stream get assets => _assetsController.stream;
   Stream get assetsMetaData => _assetsMetaDataController.stream;
   Stream get isLoadingAssets => _isLoadingAssetsController.stream;
+  Stream get isCreatingAsset => _isCreatingAssetController.stream;
+  Stream get asset => _newAssetController.stream;
 
   init() {
     _assetsController = BehaviorSubject<List<Asset>>();
     _assetsMetaDataController = BehaviorSubject<MetaData>();
     _isLoadingAssetsController = BehaviorSubject<bool>();
+    _isCreatingAssetController = BehaviorSubject<bool>();
+    _newAssetController = BehaviorSubject<Asset>();
   }
+
+  dispose() {
+    _assetsController.close();
+    _assetsMetaDataController.close();
+    _isLoadingAssetsController.close();
+    _isCreatingAssetController.close();
+    _newAssetController.close();
+  }
+
+  createAsset(Asset asset) async {
+    try {
+      _isCreatingAssetController.sink.add(true);
+      var data = await AssetRepo.create(asset);
+      _newAssetController.sink.add(data['asset']);
+    } catch (error) {
+      if (error is RequestException) {
+        _newAssetController.sink.addError(error.message);
+      } else {
+        _newAssetController.sink.addError(error.toString());
+      }
+    } finally {
+      _isCreatingAssetController.sink.add(false);
+    }
+  }
+
+  resetAssetCreation() => _newAssetController.sink.add(null);
 
   getAllAssets({String searchString, String user, int limit, int page}) async {
     _isLoadingAssetsController.add(true);
@@ -53,13 +86,6 @@ class MyAssetsPageBloc {
 
   /// show alert message
   alert(String message) => mainBloc.alert(message);
-
-  /// close all the opened streams
-  dispose() {
-    _assetsController.close();
-    _assetsMetaDataController.close();
-    _isLoadingAssetsController.close();
-  }
 }
 
 final MyAssetsPageBloc myAssetsPageBloc = MyAssetsPageBloc();

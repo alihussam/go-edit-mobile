@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:goedit/blocs/my_assets_page_bloc.dart';
-import 'package:goedit/ui/pages/create_new_asset_page.dart';
-import 'package:goedit/ui/pages/create_new_job_page.dart';
+import 'package:goedit/models/asset.dart';
 import 'package:goedit/ui/widgets/cards.dart';
 import 'package:goedit/ui/widgets/inputs.dart';
 import 'package:goedit/ui/widgets/loading.dart';
+import 'package:goedit/ui/widgets/screens.dart';
 import 'package:goedit/utils/global_navigation.dart';
 
 class MyAssetsPage extends StatefulWidget {
@@ -13,6 +13,9 @@ class MyAssetsPage extends StatefulWidget {
 }
 
 class _MyAssetsPageState extends State<MyAssetsPage> {
+  FullWidthFormController _formController = FullWidthFormController();
+  Asset _asset = new Asset();
+
   @override
   void initState() {
     myAssetsPageBloc.init();
@@ -28,6 +31,55 @@ class _MyAssetsPageState extends State<MyAssetsPage> {
 
   @override
   Widget build(BuildContext context) {
+    // register listeners
+    myAssetsPageBloc.isCreatingAsset.listen(
+      (event) {
+        _formController.switchIsLoading(true);
+      },
+    ).onError((error) {
+      _formController.showToast(error);
+      _formController.switchIsLoading(false);
+    });
+    myAssetsPageBloc.asset.listen((event) {
+      if (event != null) {
+        myAssetsPageBloc.getAllAssets();
+        _formController.switchIsLoading(false);
+        _formController.changeCurrentScreen(true);
+        _asset = new Asset();
+      }
+    }).onError((error) {
+      _formController.showToast(error);
+      _formController.switchIsLoading(false);
+    });
+
+    Widget _buildCreateAssetForm() {
+      return FullWidthFormScreen(
+        actionButtonOneText: 'Save',
+        actionButtonTwoText: 'Cancel',
+        fullWidthFormController: _formController,
+        headerTitle: 'Create New Asset',
+        onActionButtonOnePress: () {
+          if (_formController.validateForm()) {
+            if (_asset.imageFile == null) {
+              _formController.showToast('Cover image is required');
+              return;
+            }
+            myAssetsPageBloc.createAsset(_asset);
+          }
+        },
+        onActionButtonTwoPress: () => GlobalNavigation.key.currentState.pop(),
+        onSuccessButtonPress: () => GlobalNavigation.key.currentState.pop(),
+        onValueChange: (FullWidthFormState state) {
+          _asset.title = state.title;
+          _asset.description = state.description;
+          _asset.price = state.price;
+          _asset.currency = state.currency;
+          _asset.imageFile = state.singleImage;
+        },
+        successScreenMessage: 'Success',
+      );
+    }
+
     Widget _buildJobList() {
       return Expanded(
         child: StreamBuilder(
@@ -70,7 +122,7 @@ class _MyAssetsPageState extends State<MyAssetsPage> {
           child: Text('Create New Asset',
               style: TextStyle(color: Colors.white, fontSize: 14)),
           onPressed: () => GlobalNavigation.key.currentState.push(
-              MaterialPageRoute(builder: (context) => CreateNewAssetPage())),
+              MaterialPageRoute(builder: (context) => _buildCreateAssetForm())),
         ),
       );
     }
