@@ -124,3 +124,41 @@ Widget buildAssetTileCard(Asset asset) {
     ),
   );
 }
+
+Widget operationSuccessScafold(
+    {String successMessage = 'Successful',
+    String buttonText = 'Go Back',
+    Function onPressed}) {
+  return Scaffold(
+    body: Container(
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(successMessage),
+            SizedBox(
+              height: 10,
+            ),
+            OutlineButton(
+              onPressed: onPressed,
+              child: Text(buttonText),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+Widget headerContainerBottomCurve(String title, Color color) {
+  return Container(
+      padding: EdgeInsets.all(40),
+      decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.vertical(bottom: Radius.circular(30))),
+      child: Text(
+        title,
+        style: TextStyle(fontSize: 24, color: Colors.white),
+        textAlign: TextAlign.center,
+      ));
+}

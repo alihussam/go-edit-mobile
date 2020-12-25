@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:io';
-import 'package:http/http.dart' as http;
 import 'package:goedit/models/asset.dart';
 import 'package:goedit/models/metaData.dart';
 import 'package:goedit/utils/request.dart';
@@ -11,50 +8,15 @@ class AssetProv {
     Asset asset,
   ) async {
     try {
-      var req = http.MultipartRequest(
-          'POST', Uri.parse('http://192.168.1.106:4041/api/asset/create'));
+      Map<String, String> headers = {'authorization': accessToken};
+      Map<String, String> body = Map<String, String>();
 
-      req.headers.addAll({
-        'authorization': accessToken,
-        'Content-Type': 'multipart/form-data'
-      });
+      // convert map to string, string
+      asset.toJson().forEach((key, value) => body[key] = value?.toString());
 
-      // create a request
-      req.fields['title'] = asset.title.toString();
-      req.fields['description'] = asset.description.toString();
-      req.fields['currency'] = asset.currency.toString();
-      req.fields['price'] = asset.price.toString();
+      var data = await RequestClient.postMultiPart('asset/create',
+          headers: headers, payload: body, files: [asset.imageFile]);
 
-      print('Payload');
-      print(req.fields);
-
-      // check if file
-      if (asset.imageFile != null) {
-        print('here');
-        req.files.add(
-          await http.MultipartFile.fromPath(
-            'files',
-            asset.imageFile.path,
-          ),
-        );
-      }
-
-      print('Request');
-      print(req.toString());
-
-      var response = await req.send();
-      var parsedResponse = await response.stream.bytesToString();
-      var data = json.decode(parsedResponse);
-
-      if (response.statusCode != 200) {
-        print('Data:::');
-        print(data);
-        throw data['message'];
-      }
-
-      // var data = await RequestClient.post('asset/create',
-      //     headers: {'authorization': accessToken},
-      //     jsonEncodedBody: json.encode(asset.toJson()));
       return {'asset': Asset.fromJson(data['data'])};
     } catch (exc) {
       print('exc here in create asset');

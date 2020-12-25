@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:goedit/blocs/create_new_asset_page_bloc.dart';
 import 'package:goedit/models/asset.dart';
@@ -11,12 +10,12 @@ import 'package:goedit/utils/field_validators.dart';
 import 'package:goedit/utils/global_navigation.dart';
 import 'package:image_picker/image_picker.dart';
 
-class CreateNewAssetPage extends StatefulWidget {
+class FullWidthFormScreen extends StatefulWidget {
   @override
-  _CreateNewAssetPageState createState() => _CreateNewAssetPageState();
+  _FullWidthFormScreenState createState() => _FullWidthFormScreenState();
 }
 
-class _CreateNewAssetPageState extends State<CreateNewAssetPage>
+class _FullWidthFormScreenState extends State<FullWidthFormScreen>
     with FieldValidators {
   GlobalKey<ScaffoldState> _key = new GlobalKey<ScaffoldState>();
   GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
