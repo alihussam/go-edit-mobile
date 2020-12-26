@@ -1,27 +1,25 @@
+import 'dart:io';
+
 import 'package:goedit/models/employerProfile.dart';
 import 'package:goedit/models/freelancerProfile.dart';
 import 'package:goedit/models/name.dart';
-import 'package:json_annotation/json_annotation.dart';
 
-@JsonSerializable()
 class User {
-  @JsonKey(ignore: true)
   String sId;
   Name name;
   String email;
   String password;
-  @JsonKey(ignore: true)
   bool isEmailVerified;
   String role;
   String imageUrl;
-  @JsonKey(ignore: true)
   bool isDisabled;
   FreelancerProfile freelancerProfile;
   EmployerProfile employerProfile;
-  @JsonKey(ignore: true)
   String createdAt;
-  @JsonKey(ignore: true)
   String updatedAt;
+  List<String> portfolioUrls = [];
+  File profileImage;
+  List<File> portfolioImages = [];
 
   User(
       {this.sId,
@@ -35,7 +33,8 @@ class User {
       this.freelancerProfile,
       this.employerProfile,
       this.createdAt,
-      this.updatedAt});
+      this.updatedAt,
+      this.portfolioUrls});
 
   String get unifiedName {
     String name = '';
@@ -52,7 +51,9 @@ class User {
     password = json['password'];
     isEmailVerified = json['isEmailVerified'];
     role = json['role'];
-    imageUrl = json['imageUrl'];
+    imageUrl = json['imageUrl'] != null
+        ? json['imageUrl']
+        : 'https://s3.amazonaws.com/37assets/svn/765-default-avatar.png';
     isDisabled = json['isDisabled'];
     freelancerProfile = json['freenlancerProfile'] != null
         ? new FreelancerProfile.fromJson(json['freenlancerProfile'])
@@ -62,6 +63,9 @@ class User {
         : null;
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
+    portfolioUrls = json['portfolioUrls'] != null
+        ? json['portfolioUrls'].cast<String>()
+        : [];
   }
 
   Map<String, dynamic> toJson() {

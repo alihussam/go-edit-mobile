@@ -8,6 +8,7 @@ class ProfilePageBloc {
   BehaviorSubject<int> _activeStatCardController;
   BehaviorSubject<bool> _isUpdateModeOnController;
   BehaviorSubject<bool> _isUpdatingProfileController;
+
   Stream get activeStatCardIndex => _activeStatCardController.stream;
   Stream get isUpdateModeOn => _isUpdateModeOnController.stream;
   Stream get isUpdatingProfile => _isUpdatingProfileController.stream;
@@ -34,6 +35,23 @@ class ProfilePageBloc {
     _activeStatCardController.close();
     _isUpdateModeOnController.close();
     _isUpdatingProfileController.close();
+  }
+
+  // update profile
+  updateProfilePicture(User user) async {
+    try {
+      _isUpdatingProfileController.sink.add(true);
+      var data = await UserRepo.updateProfilePicture(user);
+      mainBloc.updateUserProfile(data['profile']);
+    } catch (error) {
+      if (error is RequestException) {
+        alert(error.message);
+      } else {
+        alert(error.toString());
+      }
+    } finally {
+      _isUpdatingProfileController.sink.add(false);
+    }
   }
 
   // update profile

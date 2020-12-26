@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:goedit/blocs/main.dart';
@@ -8,6 +10,7 @@ import 'package:goedit/models/name.dart';
 import 'package:goedit/models/user.dart';
 import 'package:goedit/ui/widgets/inputs.dart';
 import 'package:goedit/ui/widgets/inputs/gridview_image_picker.dart';
+import 'package:goedit/ui/widgets/inputs/profileview_image_picker.dart';
 import 'package:goedit/ui/widgets/loading.dart';
 import 'package:flutter_tags/flutter_tags.dart';
 import 'package:goedit/utils/field_validators.dart';
@@ -297,13 +300,12 @@ class _ProfilePageState extends State<ProfilePage> with FieldValidators {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                ClipOval(
-                  child: Image.network(
-                    'https://uifaces.co/our-content/donated/L7wQctBt.jpg',
-                    height: 100.0,
-                    width: 100.0,
-                    fit: BoxFit.fill,
-                  ),
+                ProfileViewImagePicker(
+                  imageUrl: user.imageUrl,
+                  onImageSelect: (File image) {
+                    updatedProfile.profileImage = image;
+                    profilePageBloc.updateProfilePicture(updatedProfile);
+                  },
                 ),
                 SizedBox(
                   height: 10,
@@ -369,7 +371,7 @@ class _ProfilePageState extends State<ProfilePage> with FieldValidators {
     }
 
     // build skill section
-    Widget _buildPortfolioSection() {
+    Widget _buildPortfolioSection(User user) {
       return Container(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -386,8 +388,12 @@ class _ProfilePageState extends State<ProfilePage> with FieldValidators {
                 stream: profilePageBloc.isUpdateModeOn,
                 builder: (context, snapshot) {
                   return GridViewImagePicker(
-                      imageUrls: [],
-                      isViewModeOnly: !(snapshot.hasData && snapshot.data));
+                    imageUrls: user.portfolioUrls,
+                    isViewModeOnly: !(snapshot.hasData && snapshot.data),
+                    onImageSelect: (List<File> images) {
+                      updatedProfile.portfolioImages = images;
+                    },
+                  );
                 }),
 
             // Tags(
@@ -425,7 +431,7 @@ class _ProfilePageState extends State<ProfilePage> with FieldValidators {
             SizedBox(
               height: 10,
             ),
-            _buildPortfolioSection(),
+            _buildPortfolioSection(user),
           ],
         ),
       );

@@ -106,6 +106,7 @@ class RequestClient {
 
       var response = await req.send();
       var parsedResponse = await response.stream.bytesToString();
+      print(parsedResponse);
       var data = json.decode(parsedResponse);
 
       if (response.statusCode != 200) {

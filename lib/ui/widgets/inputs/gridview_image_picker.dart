@@ -6,8 +6,12 @@ import 'package:goedit/utils/file_helper.dart';
 class GridViewImagePicker extends StatefulWidget {
   final List<String> imageUrls;
   final bool isViewModeOnly;
+  final Function(List<File> _images) onImageSelect;
 
-  GridViewImagePicker({@required this.imageUrls, this.isViewModeOnly = false});
+  GridViewImagePicker(
+      {@required this.imageUrls,
+      this.isViewModeOnly = false,
+      this.onImageSelect});
 
   @override
   _GridViewImagePickerState createState() => _GridViewImagePickerState();
@@ -22,6 +26,7 @@ class _GridViewImagePickerState extends State<GridViewImagePicker> {
       File image = await FileHelper.pickImageFromGallery();
       if (image != null) {
         _images.add(image);
+        widget.onImageSelect(_images);
         this.setState(() {});
       }
     }
