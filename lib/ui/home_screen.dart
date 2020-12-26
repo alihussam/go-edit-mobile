@@ -104,8 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   return MinimalDrawerHeader(
-                    profileImageUrl:
-                        'https://uifaces.co/our-content/donated/L7wQctBt.jpg',
+                    profileImageUrl: snapshot.data.imageUrl,
                     email: snapshot.data.email,
                     name: snapshot.data.unifiedName,
                   );

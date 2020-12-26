@@ -95,6 +95,7 @@ class MinimalDrawerHeader extends StatelessWidget {
         borderRadius: BorderRadius.circular(8.0),
         child: Image.network(
           profileImageUrl,
+          fit: BoxFit.cover,
           height: 100.0,
           width: 100.0,
         ),
