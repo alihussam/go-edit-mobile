@@ -38,7 +38,11 @@ class Asset {
     price =
         json['price'] != null ? double.parse(json['price'].toString()) : null;
     currency = json['currency'];
-    imageUrls = json['imageUrls'].cast<String>();
+    imageUrls = json['imageUrls'].length > 0
+        ? json['imageUrls'].cast<String>()
+        : [
+            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZP-L20C3N8Pfs71J4Fc52e7e7p2PeA7wimg&usqp=CAU'
+          ];
     resourceUrl = json['resourceUrl'];
     if (!(json['user'] is String)) {
       user = json['user'] != null ? new User.fromJson(json['user']) : null;

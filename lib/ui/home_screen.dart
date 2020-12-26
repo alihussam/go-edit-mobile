@@ -7,6 +7,7 @@ import 'package:goedit/ui/pages/my_jobs_page.dart';
 import 'package:goedit/ui/pages/profile_page.dart';
 import 'package:goedit/ui/widgets/loading.dart';
 import 'package:goedit/ui/widgets/minimal_drawer.dart';
+import 'package:goedit/utils/global_navigation.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -30,15 +31,40 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final List<DrawerMenuOptionModel> _drawerOptions = [
       DrawerMenuOptionModel(
-          'Home', Icons.home, () => homeBloc.changeActivePage(0)),
+          'Home',
+          Icons.home,
+          () => {
+                homeBloc.changeActivePage(0),
+                GlobalNavigation.key.currentState.pop(),
+              }),
       DrawerMenuOptionModel(
-          'Jobs', Icons.work, () => homeBloc.changeActivePage(1)),
+          'Jobs',
+          Icons.work,
+          () => {
+                homeBloc.changeActivePage(1),
+                GlobalNavigation.key.currentState.pop(),
+              }),
       DrawerMenuOptionModel(
-          'My Jobs', Icons.work_outline, () => homeBloc.changeActivePage(2)),
-      DrawerMenuOptionModel('My Assets', Icons.cloud_download,
-          () => homeBloc.changeActivePage(3)),
-      DrawerMenuOptionModel('My Profile', Icons.account_circle,
-          () => homeBloc.changeActivePage(4)),
+          'My Jobs',
+          Icons.work_outline,
+          () => {
+                homeBloc.changeActivePage(2),
+                GlobalNavigation.key.currentState.pop(),
+              }),
+      DrawerMenuOptionModel(
+          'My Assets',
+          Icons.cloud_download,
+          () => {
+                homeBloc.changeActivePage(3),
+                GlobalNavigation.key.currentState.pop(),
+              }),
+      DrawerMenuOptionModel(
+          'My Profile',
+          Icons.account_circle,
+          () => {
+                homeBloc.changeActivePage(4),
+                GlobalNavigation.key.currentState.pop(),
+              }),
     ];
 
     final List<Widget> _pages = [

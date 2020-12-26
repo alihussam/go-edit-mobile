@@ -2,9 +2,11 @@ import 'package:flappy_search_bar/flappy_search_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:goedit/blocs/home.dart';
 import 'package:goedit/models/asset.dart';
+import 'package:goedit/ui/pages/asset_details.dart';
 import 'package:goedit/ui/widgets/cards.dart';
 import 'package:goedit/ui/widgets/inputs.dart';
 import 'package:goedit/ui/widgets/loading.dart';
+import 'package:goedit/utils/global_navigation.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -15,7 +17,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     // homeBloc.getAllJobs();
-    homeBloc.init();
     homeBloc.getAllAssets();
     super.initState();
   }
@@ -247,7 +248,12 @@ class _HomePageState extends State<HomePage> {
                         itemBuilder: (context, index) {
                           return Container(
                             width: MediaQuery.of(context).size.width * 0.9,
-                            child: buildAssetTileCard(_assets[index]),
+                            child: buildAssetTileCard(_assets[index], () {
+                              GlobalNavigation.key.currentState.push(
+                                  MaterialPageRoute(
+                                      builder: (context) => AssetDetailsPage(
+                                          asset: _assets[index])));
+                            }),
                           );
                         });
                   }

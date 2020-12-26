@@ -72,97 +72,100 @@ Widget buildJobTileCard(Job job) {
   );
 }
 
-Widget buildAssetTileCard(Asset asset) {
+Widget buildAssetTileCard(Asset asset, Function onPress) {
   return Card(
     semanticContainer: true,
     clipBehavior: Clip.antiAliasWithSaveLayer,
-    child: Container(
-      height: 180,
-      padding: EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-            colors: [Color(0xFFdadadf), Color(0xFFe9e9ec).withOpacity(0.5)]),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          // asset image
-          Expanded(
-            child: Card(
-              semanticContainer: true,
-              clipBehavior: Clip.antiAliasWithSaveLayer,
-              child: Image.network(
-                asset.imageUrls.length > 0 ? asset.imageUrls[0] : '',
-                fit: BoxFit.fill,
+    child: InkWell(
+      onTap: onPress,
+      child: Container(
+        height: 180,
+        padding: EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+              colors: [Color(0xFFdadadf), Color(0xFFe9e9ec).withOpacity(0.5)]),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            // asset image
+            Expanded(
+              child: Card(
+                semanticContainer: true,
+                clipBehavior: Clip.antiAliasWithSaveLayer,
+                child: Image.network(
+                  asset.imageUrls.length > 0 ? asset.imageUrls[0] : '',
+                  fit: BoxFit.fill,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                elevation: 5,
+                margin: EdgeInsets.all(10),
               ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              elevation: 5,
-              margin: EdgeInsets.all(10),
             ),
-          ),
-          Expanded(
-            child: Container(
-              margin: EdgeInsets.all(15),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Container(
-                    margin: EdgeInsets.only(bottom: 10),
-                    child: Text(
-                      asset.title,
-                      overflow: TextOverflow.ellipsis,
-                      style: new TextStyle(
-                        // fontSize: 13.0,
-                        // color: new Color(0xFF212121),
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(bottom: 8),
-                    child: Text(
-                      'By ${asset.user.unifiedName}',
-                      overflow: TextOverflow.ellipsis,
-                      style: new TextStyle(
-                        fontSize: 10.0,
-                        // color: new Color(0xFF212121),
-                        // fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(bottom: 10),
-                    child: RatingBarIndicator(
-                      rating: asset.avgRating,
-                      itemBuilder: (context, index) => Icon(
-                        Icons.star,
-                        color: Colors.amber,
-                      ),
-                      itemCount: 5,
-                      itemSize: 12,
-                      direction: Axis.horizontal,
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(bottom: 10),
-                    child: FlatButton(
-                      padding: EdgeInsets.all(5),
-                      onPressed: () {},
-                      color: Color(0xFF333738),
+            Expanded(
+              child: Container(
+                margin: EdgeInsets.all(15),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(bottom: 10),
                       child: Text(
-                        'Buy ${asset.currency + asset.price.toString()}',
-                        style: TextStyle(color: Colors.white),
+                        asset.title,
+                        overflow: TextOverflow.ellipsis,
+                        style: new TextStyle(
+                          // fontSize: 13.0,
+                          // color: new Color(0xFF212121),
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                    Container(
+                      margin: EdgeInsets.only(bottom: 8),
+                      child: Text(
+                        'By ${asset.user.unifiedName}',
+                        overflow: TextOverflow.ellipsis,
+                        style: new TextStyle(
+                          fontSize: 10.0,
+                          // color: new Color(0xFF212121),
+                          // fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(bottom: 10),
+                      child: RatingBarIndicator(
+                        rating: asset.avgRating,
+                        itemBuilder: (context, index) => Icon(
+                          Icons.star,
+                          color: Colors.amber,
+                        ),
+                        itemCount: 5,
+                        itemSize: 12,
+                        direction: Axis.horizontal,
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(bottom: 10),
+                      child: FlatButton(
+                        padding: EdgeInsets.all(5),
+                        onPressed: onPress,
+                        color: Color(0xFF333738),
+                        child: Text(
+                          'Buy ${asset.currency + asset.price.toString()}',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     ),
   );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:goedit/blocs/my_assets_page_bloc.dart';
 import 'package:goedit/models/asset.dart';
+import 'package:goedit/ui/pages/asset_details.dart';
 import 'package:goedit/ui/widgets/cards.dart';
 import 'package:goedit/ui/widgets/inputs.dart';
 import 'package:goedit/ui/widgets/loading.dart';
@@ -102,7 +103,13 @@ class _MyAssetsPageState extends State<MyAssetsPage> {
                       itemCount: snapshot.data.length,
                       itemBuilder: (context, index) {
                         return buildAssetTileCard(
-                            snapshot.data.elementAt(index));
+                            snapshot.data.elementAt(index), () {
+                          GlobalNavigation.key.currentState
+                              .push(MaterialPageRoute(
+                                  builder: (context) => AssetDetailsPage(
+                                        asset: snapshot.data.elementAt(index),
+                                      )));
+                        });
                       });
                 }
                 return LoadSpinner();
