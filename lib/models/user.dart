@@ -44,13 +44,21 @@ class User {
     return name;
   }
 
+  String get shortName {
+    String name = '';
+    if (this.name.firstName != null) name += this.name.firstName + ' ';
+    if (this.name.lastName != null)
+      name += this.name.lastName.toUpperCase().substring(0, 1);
+    return name;
+  }
+
   User.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
     name = json['name'] != null ? new Name.fromJson(json['name']) : null;
     email = json['email'];
     password = json['password'];
     isEmailVerified = json['isEmailVerified'];
-    role = json['role'];
+    role = json['role'] != null ? json['role'] : '';
     imageUrl = json['imageUrl'] != null
         ? json['imageUrl']
         : 'https://s3.amazonaws.com/37assets/svn/765-default-avatar.png';

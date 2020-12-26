@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:goedit/models/metaData.dart';
 import 'package:goedit/models/user.dart';
 import 'package:goedit/utils/request.dart';
 
@@ -47,6 +48,32 @@ class UserProv {
       print('exc here in update profile provider');
       print(exc.toString());
       if (exc.message != null) print(exc.message);
+      throw exc;
+    }
+  }
+
+  /// get All asset provider
+  static Future<Map> getAll(
+      String accessToken, Map<String, dynamic> queryParams) async {
+    try {
+      var data = await RequestClient.get('user/getAll',
+          headers: {'authorization': accessToken}, queryParams: queryParams);
+      MetaData metaData = MetaData.fromJson(data['data']['metaData']);
+      List<User> entries = [];
+      for (var entry in data['data']['entries']) {
+        entries.add(User.fromJson(entry));
+      }
+
+      print('Get All Users Data; ');
+      print(data['data']['entries']);
+
+      return {
+        'entries': entries,
+        'metaData': metaData,
+      };
+    } catch (exc) {
+      print('exc here in get all assets');
+      print(exc);
       throw exc;
     }
   }

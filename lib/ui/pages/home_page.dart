@@ -16,8 +16,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   void initState() {
-    // homeBloc.getAllJobs();
     homeBloc.getAllAssets();
+    homeBloc.getAllUsers();
     super.initState();
   }
 
@@ -48,14 +48,20 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  name,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                Flexible(
+                  child: Text(
+                    name,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
                 ),
                 SizedBox(
                   height: 6,
                 ),
-                Text(jobTitle),
+                Text(
+                  jobTitle,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ],
             ),
           ],
@@ -95,61 +101,60 @@ class _HomePageState extends State<HomePage> {
             Container(
               margin: EdgeInsets.only(top: 20),
               height: 215,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  Column(
-                    children: [
-                      _buildUserProfileTile(
-                        name: 'Muzi Zuishuai',
-                        jobTitle: "Graphic Designer",
-                        imageUrl:
-                            "https://fiverr-res.cloudinary.com/images/q_auto,f_auto/gigs/125296371/original/653cc81872119844644e33d40f5afd9bd61743b6/create-cool-cartoon-avatars.jpg",
-                      ),
-                      SizedBox(height: 10),
-                      _buildUserProfileTile(
-                        name: 'FanatasyU',
-                        jobTitle: "Motion Artist",
-                        imageUrl:
-                            "https://store.playstation.com/store/api/chihiro/00_09_000/container/IS/en/999/EP2402-CUSA05624_00-AV00000000000213/1601168968000/image?w=240&h=240&bg_color=000000&opacity=100&_version=00_09_000",
-                      ),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      _buildUserProfileTile(
-                        name: 'Dazy',
-                        jobTitle: "Illustrator",
-                        imageUrl:
-                            "https://avatarfiles.alphacoders.com/162/162492.png",
-                      ),
-                      SizedBox(height: 10),
-                      _buildUserProfileTile(
-                        name: 'Rito Gami',
-                        jobTitle: "Anime Artist",
-                        imageUrl:
-                            "https://i.pinimg.com/236x/c0/c5/9b/c0c59bcebb8312aea75f3234fcd532e7.jpg",
-                      ),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      _buildUserProfileTile(
-                        name: 'Living In Fantasy',
-                        jobTitle: "VFX",
-                        imageUrl:
-                            "https://www.gameindustrycareerguide.com/wp-content/uploads/2017/12/visual-effects-nathaniel-hubbell-1000x480.jpg",
-                      ),
-                      SizedBox(height: 10),
-                      _buildUserProfileTile(
-                        name: 'Echos',
-                        jobTitle: "Motion Artist",
-                        imageUrl:
-                            "https://www.wallpaperflare.com/static/829/954/430/astronaut-artwork-dark-space-art-wallpaper.jpg",
-                      ),
-                    ],
-                  ),
-                ],
+              child: StreamBuilder(
+                stream: homeBloc.users,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return GridView.count(
+                      scrollDirection: Axis.horizontal,
+                      crossAxisCount: 2,
+                      childAspectRatio: 3 / 7,
+                      children: List.generate(snapshot.data.length, (index) {
+                        return _buildUserProfileTile(
+                          name: snapshot.data.elementAt(index).shortName,
+                          jobTitle: snapshot.data
+                                          .elementAt(index)
+                                          .freelancerProfile !=
+                                      null &&
+                                  snapshot.data
+                                          .elementAt(index)
+                                          .freelancerProfile
+                                          .jobTitle !=
+                                      null
+                              ? snapshot.data
+                                  .elementAt(index)
+                                  .freelancerProfile
+                                  .jobTitle
+                              : ' - ',
+                          imageUrl: snapshot.data.elementAt(index).imageUrl,
+                        );
+                      }),
+                    );
+                    // return ListView.builder(
+                    //     itemCount: snapshot.data.length,
+                    //     itemBuilder: (context, index) {
+                    //       return Column(
+                    //         children: [
+                    //           SizedBox(height: 10),
+                    //           _buildUserProfileTile(
+                    //             name: 'FanatasyU',
+                    //             jobTitle: "Motion Artist",
+                    //             imageUrl:
+                    //                 "https://store.playstation.com/store/api/chihiro/00_09_000/container/IS/en/999/EP2402-CUSA05624_00-AV00000000000213/1601168968000/image?w=240&h=240&bg_color=000000&opacity=100&_version=00_09_000",
+                    //           ),
+                    //         ],
+                    //       );
+                    //     });
+                  }
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text('Some error occured'),
+                    );
+                  }
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                },
               ),
             ),
           ],
