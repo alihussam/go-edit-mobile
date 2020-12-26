@@ -172,27 +172,6 @@ class _HomePageState extends State<HomePage> {
       );
     }
 
-    _buildAssetCard(String title, String imageUrl) {
-      return Container(
-        width: MediaQuery.of(context).size.width * 0.8,
-        margin: EdgeInsets.only(right: 10),
-        padding: EdgeInsets.all(15),
-        height: 120,
-        decoration: BoxDecoration(
-            image: DecorationImage(
-                fit: BoxFit.cover, image: NetworkImage(imageUrl)),
-            borderRadius: BorderRadius.circular(20)),
-        child: Text(
-          title,
-          style: TextStyle(
-              backgroundColor: Colors.black,
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.bold),
-        ),
-      );
-    }
-
     _buildCategoryGrid() {
       return Container(
         child: Column(
@@ -250,7 +229,7 @@ class _HomePageState extends State<HomePage> {
             _buildHeaderOptions('Recommended Assets'),
             Container(
               margin: EdgeInsets.only(top: 20),
-              height: 120,
+              height: 200,
               child: StreamBuilder(
                 stream: homeBloc.assets,
                 builder: (context, snapshot) {
@@ -266,12 +245,10 @@ class _HomePageState extends State<HomePage> {
                         scrollDirection: Axis.horizontal,
                         itemCount: _assets.length,
                         itemBuilder: (context, index) {
-                          print("${index} found on array");
-                          return _buildAssetCard(
-                              _assets[index].title,
-                              _assets[index].imageUrls.length > 0
-                                  ? _assets[index].imageUrls[0]
-                                  : '');
+                          return Container(
+                            width: MediaQuery.of(context).size.width * 0.9,
+                            child: buildAssetTileCard(_assets[index]),
+                          );
                         });
                   }
                   if (snapshot.hasError) {
@@ -295,17 +272,9 @@ class _HomePageState extends State<HomePage> {
       child: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            // buildSearchBar(
-            //     color: Theme.of(context).primaryColor,
-            //     onSearch: (String searchString) async {
-            //       homeBloc.getAllJobs(searchString: searchString);
-            //       return [];
-            //     },
-            //     onCancelled: () => homeBloc.getAllJobs()),
             _buildDesignersGrid(),
             _buildCategoryGrid(),
             _buildRecommendedAssets(),
-            // _buildJobList(),
           ],
         ),
       ),

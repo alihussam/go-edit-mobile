@@ -15,6 +15,7 @@ class Asset {
   String createdAt;
   String updatedAt;
   File imageFile;
+  double avgRating;
 
   Asset(
       {this.sId,
@@ -45,6 +46,7 @@ class Asset {
     isDisabled = json['isDisabled'];
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
+    avgRating = json['avgRating'] != null ? json['avgRating'] : 2.3;
   }
 
   Map<String, dynamic> toJson() {
@@ -62,6 +64,7 @@ class Asset {
     if (this.isDisabled != null) data['isDisabled'] = this.isDisabled;
     if (this.createdAt != null) data['createdAt'] = this.createdAt;
     if (this.updatedAt != null) data['updatedAt'] = this.updatedAt;
+    if (this.avgRating != null) data['avgRating'] = this.avgRating;
     return data;
   }
 }

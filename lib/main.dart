@@ -89,7 +89,7 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       navigatorKey: GlobalNavigation.key,
       theme: ThemeData(
-        primaryColor: Color(0xFFA837DF),
+        primaryColor: Color(0xFF333738),
       ),
       home: Scaffold(
         key: _key,
