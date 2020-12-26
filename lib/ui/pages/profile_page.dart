@@ -7,6 +7,7 @@ import 'package:goedit/models/freelancerProfile.dart';
 import 'package:goedit/models/name.dart';
 import 'package:goedit/models/user.dart';
 import 'package:goedit/ui/widgets/inputs.dart';
+import 'package:goedit/ui/widgets/inputs/gridview_image_picker.dart';
 import 'package:goedit/ui/widgets/loading.dart';
 import 'package:flutter_tags/flutter_tags.dart';
 import 'package:goedit/utils/field_validators.dart';
@@ -368,35 +369,44 @@ class _ProfilePageState extends State<ProfilePage> with FieldValidators {
     }
 
     // build skill section
-    Widget _buildSkillSection() {
+    Widget _buildPortfolioSection() {
       return Container(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'Skills',
+              'Portfolio',
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             SizedBox(
               height: 10,
             ),
-            Tags(
-              itemCount: 5,
-              itemBuilder: (int index) {
-                return ItemTags(
-                  index: index,
-                  title: [
-                    'UI/UX',
-                    'Photoshop',
-                    'Illustrator',
-                    'Figma',
-                    'AdobeXD'
-                  ].elementAt(index),
-                  elevation: 5.0,
-                  pressEnabled: false,
-                );
-              },
-            )
+            StreamBuilder(
+                initialData: false,
+                stream: profilePageBloc.isUpdateModeOn,
+                builder: (context, snapshot) {
+                  return GridViewImagePicker(
+                      imageUrls: [],
+                      isViewModeOnly: !(snapshot.hasData && snapshot.data));
+                }),
+
+            // Tags(
+            //   itemCount: 5,
+            //   itemBuilder: (int index) {
+            //     return ItemTags(
+            //       index: index,
+            //       title: [
+            //         'UI/UX',
+            //         'Photoshop',
+            //         'Illustrator',
+            //         'Figma',
+            //         'AdobeXD'
+            //       ].elementAt(index),
+            //       elevation: 5.0,
+            //       pressEnabled: false,
+            //     );
+            //   },
+            // )
           ],
         ),
       );
@@ -415,7 +425,7 @@ class _ProfilePageState extends State<ProfilePage> with FieldValidators {
             SizedBox(
               height: 10,
             ),
-            _buildSkillSection(),
+            _buildPortfolioSection(),
           ],
         ),
       );
