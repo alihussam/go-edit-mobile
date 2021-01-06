@@ -38,6 +38,38 @@ class JobProv {
     }
   }
 
+  static Future<Map> bidAction(
+    String accessToken,
+    Map<String, String> payload,
+  ) async {
+    try {
+      var data = await RequestClient.post('jobs/bidAction',
+          headers: {'authorization': accessToken},
+          jsonEncodedBody: json.encode(payload));
+      return {'job': Job.fromJson(data['data'])};
+    } catch (exc) {
+      print('exc here in bid action job');
+      print(exc);
+      throw exc;
+    }
+  }
+
+  static Future<Map> jobAction(
+    String accessToken,
+    Map<String, String> payload,
+  ) async {
+    try {
+      var data = await RequestClient.post('jobs/jobAction',
+          headers: {'authorization': accessToken},
+          jsonEncodedBody: json.encode(payload));
+      return {'job': Job.fromJson(data['data'])};
+    } catch (exc) {
+      print('exc here in bid action job');
+      print(exc);
+      throw exc;
+    }
+  }
+
   /// get All Jobs provider
   static Future<Map> getAll(
       String accessToken, Map<String, dynamic> queryParams) async {

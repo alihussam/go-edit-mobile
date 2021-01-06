@@ -330,7 +330,11 @@ class _JobDetailsState extends State<JobDetails> with FieldValidators {
                               child: FlatButton(
                                 child: Text('Accept',
                                     style: TextStyle(color: Colors.white)),
-                                onPressed: () {},
+                                onPressed: () => jobDetailsBloc.acceptBid(widget
+                                    .job.bids
+                                    .elementAt(index)
+                                    .sId
+                                    .toString()),
                                 color: Colors.green,
                               )),
                         ],
@@ -357,7 +361,73 @@ class _JobDetailsState extends State<JobDetails> with FieldValidators {
                 _buildHeader(),
                 // check if owner viewing or not
                 ...(jobDetailsBloc.isJobOfCurrentUser(widget.job)
-                    ? [_buildJobOwnerPanel()]
+                    ? [
+                        StreamBuilder(
+                            stream: jobDetailsBloc.acceptBidAction,
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                return Card(
+                                  child: Container(
+                                    padding: EdgeInsets.all(20),
+                                    child: Center(
+                                      child: Column(
+                                        children: [
+                                          Row(
+                                            children: [
+                                              buildRoundedCornerImage(
+                                                  imageUrl: snapshot
+                                                      .data.user.imageUrl),
+                                              SizedBox(
+                                                width: 10,
+                                              ),
+                                              Flexible(
+                                                child: Text(
+                                                  snapshot
+                                                      .data.user.unifiedName,
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          Text(
+                                              'STATUS: ${snapshot.data.status != null ? snapshot.data.status.toLowerCase() : ''}'),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          // complete job or show that its already completed
+                                          ...(snapshot.data.status ==
+                                                  'COMPLETED'
+                                              ? []
+                                              : [
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.end,
+                                                    children: [
+                                                      FlatButton(
+                                                          onPressed: () =>
+                                                              jobDetailsBloc
+                                                                  .completeJob(),
+                                                          color: Colors.green,
+                                                          child: Text(
+                                                            'Complete Job',
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .white),
+                                                          ))
+                                                    ],
+                                                  ),
+                                                ]),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }
+                              return _buildJobOwnerPanel();
+                            })
+                      ]
                     : [
                         StreamBuilder(
                             stream: jobDetailsBloc.bid,

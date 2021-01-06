@@ -9,6 +9,7 @@ class Job {
   double budget;
   String createdAt;
   String updatedAt;
+  String status;
   User user;
   List<Bid> bids;
 
@@ -20,13 +21,15 @@ class Job {
       this.budget,
       this.createdAt,
       this.updatedAt,
-      this.user});
+      this.user,
+      this.status});
 
   Job.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
     currency = json['currency'];
     title = json['title'];
     description = json['description'];
+    status = json['status'];
     budget =
         json['budget'] != null ? double.parse(json['budget'].toString()) : null;
     createdAt = json['createdAt'];
