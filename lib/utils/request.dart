@@ -20,8 +20,11 @@ class RequestClient {
         newheaders.addAll(headers);
       }
       Uri finalUrl = Uri(
-        scheme: 'https',
-        host: 'goedit.herokuapp.com',
+        scheme: 'http',
+        // scheme: 'https',
+        // host: 'goedit.herokuapp.com',
+        host: '192.168.1.106',
+        port: 4041,
         path: 'api/$url',
         queryParameters: queryParams,
       );
@@ -59,10 +62,11 @@ class RequestClient {
       if (headers != null) {
         newheaders.addAll(headers);
       }
-
-      var res = await http.post('https://goedit.herokuapp.com/api/' + url,
+// https://goedit.herokuapp.com
+      var res = await http.post('http://192.168.1.106:4041/api/' + url,
           headers: newheaders,
           body: jsonEncodedBody != null ? jsonEncodedBody : null);
+      print('response from post success');
       // check if any error occured
       if (res.statusCode != 200) {
         throw new RequestException(json.decode(res.body)['errorKey'],

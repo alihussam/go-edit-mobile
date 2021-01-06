@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:goedit/blocs/job_page_bloc.dart';
+import 'package:goedit/ui/pages/job_details.dart';
 import 'package:goedit/ui/widgets/cards.dart';
 import 'package:goedit/ui/widgets/inputs.dart';
 import 'package:goedit/ui/widgets/loading.dart';
+import 'package:goedit/utils/global_navigation.dart';
 
 class JobPage extends StatefulWidget {
   @override
@@ -40,7 +42,12 @@ class _JobPageState extends State<JobPage> {
                   return ListView.builder(
                       itemCount: snapshot.data.length,
                       itemBuilder: (context, index) {
-                        return buildJobTileCard(snapshot.data.elementAt(index));
+                        return buildJobTileCard(
+                            snapshot.data.elementAt(index),
+                            () => GlobalNavigation.key.currentState.push(
+                                MaterialPageRoute(
+                                    builder: (context) => JobDetails(
+                                        job: snapshot.data.elementAt(index)))));
                       });
                 }
                 return LoadSpinner();

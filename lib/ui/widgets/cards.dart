@@ -18,55 +18,58 @@ Widget buildRoundedCornerImage({
   );
 }
 
-Widget buildJobTileCard(Job job) {
+Widget buildJobTileCard(Job job, Function onPress) {
   return Card(
-    child: Container(
-      padding: EdgeInsets.all(10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              buildRoundedCornerImage(),
-              SizedBox(
-                width: 10,
-              ),
-              Flexible(
-                child: Text(
-                  job.title,
-                  style: TextStyle(fontWeight: FontWeight.bold),
+    child: InkWell(
+      onTap: onPress,
+      child: Container(
+        padding: EdgeInsets.all(10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                buildRoundedCornerImage(imageUrl: job.user.imageUrl),
+                SizedBox(
+                  width: 10,
                 ),
-              )
-            ],
-          ),
-          Container(
-              height: 65,
-              child: Text(job.description.length <= 100
-                  ? job.description
-                  : job.description.substring(0, 140) + '...')),
-          SizedBox(
-            height: 15,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Text(
-                    'Budget:',
+                Flexible(
+                  child: Text(
+                    job.title,
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(
-                    width: 5,
-                  ),
-                  Text(
-                    job.currency + ' ' + job.budget.toString(),
-                  ),
-                ],
-              )
-            ],
-          )
-        ],
+                )
+              ],
+            ),
+            Container(
+                height: 65,
+                child: Text(job.description.length <= 100
+                    ? job.description
+                    : job.description.substring(0, 140) + '...')),
+            SizedBox(
+              height: 15,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    Text(
+                      'Budget:',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    Text(
+                      job.currency + ' ' + job.budget.toString(),
+                    ),
+                  ],
+                )
+              ],
+            )
+          ],
+        ),
       ),
     ),
   );
@@ -155,7 +158,9 @@ Widget buildAssetTileCard(Asset asset, Function onPress) {
                         onPressed: onPress,
                         color: Color(0xFF333738),
                         child: Text(
-                          'Buy ${asset.currency + asset.price.toString()}',
+                          asset.isCurrentUsersAsset
+                              ? 'Update'
+                              : 'Buy ${asset.currency + asset.price.toString()}',
                           style: TextStyle(color: Colors.white),
                         ),
                       ),

@@ -53,7 +53,12 @@ class HomeBloc {
 
       // make the call
       var res = await AssetRepo.getAll(queryParams);
-      _assetsController.add(res['entries']);
+      List<Asset> _finalList = res['entries'];
+      _finalList = _finalList.map((e) {
+        e.isCurrentUsersAsset = (e.user.sId == mainBloc.user.sId);
+        return e;
+      }).toList();
+      _assetsController.add(_finalList);
       _assetMetaDataController.add(res['metaData']);
       _isLoadingAssetsController.add(false);
     } catch (exc) {

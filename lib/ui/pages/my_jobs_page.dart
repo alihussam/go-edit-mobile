@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:goedit/blocs/my_jobs_page_bloc.dart';
 import 'package:goedit/ui/pages/create_new_job_page.dart';
+import 'package:goedit/ui/pages/job_details.dart';
 import 'package:goedit/ui/widgets/cards.dart';
 import 'package:goedit/ui/widgets/inputs.dart';
 import 'package:goedit/ui/widgets/loading.dart';
@@ -48,7 +49,12 @@ class _MyJobsPageState extends State<MyJobsPage> {
                   return ListView.builder(
                       itemCount: snapshot.data.length,
                       itemBuilder: (context, index) {
-                        return buildJobTileCard(snapshot.data.elementAt(index));
+                        return buildJobTileCard(
+                            snapshot.data.elementAt(index),
+                            () => GlobalNavigation.key.currentState.push(
+                                MaterialPageRoute(
+                                    builder: (context) => JobDetails(
+                                        job: snapshot.data.elementAt(index)))));
                       });
                 }
                 return LoadSpinner();

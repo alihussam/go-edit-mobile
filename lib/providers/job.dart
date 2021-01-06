@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:goedit/models/bid.dart';
 import 'package:goedit/models/job.dart';
 import 'package:goedit/models/metaData.dart';
 import 'package:goedit/utils/request.dart';
@@ -20,6 +21,23 @@ class JobProv {
     }
   }
 
+  static Future<Map> bid(
+    String accessToken,
+    Bid bid,
+  ) async {
+    try {
+      print(json.encode(bid.toJson()));
+      var data = await RequestClient.post('jobs/bid',
+          headers: {'authorization': accessToken},
+          jsonEncodedBody: json.encode(bid.toJson()));
+      return {'bid': Bid.fromJson(data['data'])};
+    } catch (exc) {
+      print('exc here in create job');
+      print(exc);
+      throw exc;
+    }
+  }
+
   /// get All Jobs provider
   static Future<Map> getAll(
       String accessToken, Map<String, dynamic> queryParams) async {
@@ -30,6 +48,8 @@ class JobProv {
       List<Job> entries = [];
       for (var entry in data['data']['entries']) {
         entries.add(Job.fromJson(entry));
+        // print(entry);
+        // print('***********88');
       }
 
       return {

@@ -15,7 +15,9 @@ class Asset {
   String createdAt;
   String updatedAt;
   File imageFile;
+  File resourceFile;
   double avgRating;
+  bool isCurrentUsersAsset = false;
 
   Asset(
       {this.sId,
@@ -29,7 +31,8 @@ class Asset {
       this.isDisabled,
       this.createdAt,
       this.updatedAt,
-      this.imageFile});
+      this.imageFile,
+      this.isCurrentUsersAsset});
 
   Asset.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];

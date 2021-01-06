@@ -64,7 +64,12 @@ class MyAssetsPageBloc {
 
       // make the call
       var res = await AssetRepo.getAll(queryParams);
-      _assetsController.add(res['entries']);
+      List<Asset> _finalList = res['entries'];
+      _finalList = _finalList.map((e) {
+        e.isCurrentUsersAsset = true;
+        return e;
+      }).toList();
+      _assetsController.add(_finalList);
       _assetsMetaDataController.add(res['metaData']);
       _isLoadingAssetsController.add(false);
     } catch (exc) {

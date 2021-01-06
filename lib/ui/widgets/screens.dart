@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:goedit/ui/widgets/cards.dart';
 import 'package:goedit/ui/widgets/inputs.dart';
+import 'package:goedit/ui/widgets/inputs/boxed_solo_file_picker.dart';
 import 'package:goedit/ui/widgets/loading.dart';
 import 'package:goedit/utils/field_validators.dart';
 import 'package:goedit/utils/global_navigation.dart';
@@ -21,6 +22,7 @@ class FullWidthFormState {
   double price;
   String currency = 'PKR';
   File singleImage;
+  File singleFile;
 }
 
 class FullWidthFormScreen extends StatefulWidget {
@@ -92,6 +94,12 @@ class _FullWidthFormScreenState extends State<FullWidthFormScreen>
     widget.onValueChange(_formState);
   }
 
+  // on single image input
+  void onFileSelect(File image) {
+    _formState.singleFile = image;
+    widget.onValueChange(_formState);
+  }
+
   @override
   void dispose() {
     _isLoadingController.close();
@@ -152,6 +160,10 @@ class _FullWidthFormScreenState extends State<FullWidthFormScreen>
                 placeHolderText: '+ Add Cover image',
                 onImageSelect: onSingleImageInput,
               ),
+              // BoxedSoloFilePicker(
+              //   placeHolderText: '+ Add resource',
+              //   onFileSelect: onFileSelect,
+              // ),
             ],
           ),
         ),

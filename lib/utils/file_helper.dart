@@ -1,5 +1,6 @@
 import 'dart:io';
 
+// import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
 
 class FileHelper {
@@ -18,4 +19,13 @@ class FileHelper {
         source: ImageSource.camera, imageQuality: 100));
     return new File(image.path);
   }
+
+  // // pick a file
+  // static pickFile() async {
+  //   FilePickerResult result = await FilePicker.platform.pickFiles();
+  //   if (result != null) {
+  //     File file = File(result.files.single.path);
+  //     return file;
+  //   }
+  // }
 }

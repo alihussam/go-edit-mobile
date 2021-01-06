@@ -1,3 +1,4 @@
+import 'package:goedit/models/bid.dart';
 import 'package:goedit/models/user.dart';
 
 class Job {
@@ -9,6 +10,7 @@ class Job {
   String createdAt;
   String updatedAt;
   User user;
+  List<Bid> bids;
 
   Job(
       {this.sId,
@@ -29,6 +31,15 @@ class Job {
         json['budget'] != null ? double.parse(json['budget'].toString()) : null;
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
+    bids = json['bids'] != null
+        ? () {
+            List<Bid> entries = [];
+            for (var entry in json['bids']) {
+              entries.add(Bid.fromJson(entry));
+            }
+            return entries;
+          }()
+        : [];
     if (!(json['user'] is String)) {
       user = json['user'] != null ? new User.fromJson(json['user']) : null;
     }

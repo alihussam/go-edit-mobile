@@ -16,6 +16,8 @@ import 'package:flutter_tags/flutter_tags.dart';
 import 'package:goedit/utils/field_validators.dart';
 
 class ProfilePage extends StatefulWidget {
+  final User user;
+  ProfilePage({this.user});
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
@@ -26,7 +28,7 @@ class _ProfilePageState extends State<ProfilePage> with FieldValidators {
 
   @override
   void initState() {
-    profilePageBloc.init();
+    profilePageBloc.init(widget.user);
     super.initState();
   }
 
@@ -293,7 +295,7 @@ class _ProfilePageState extends State<ProfilePage> with FieldValidators {
       return Stack(
         children: [
           // update button
-          _createUpdateProfileButton(),
+          ...(widget.user == null ? [_createUpdateProfileButton()] : []),
           Container(
             padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
             child: Column(
@@ -439,7 +441,7 @@ class _ProfilePageState extends State<ProfilePage> with FieldValidators {
 
     return SafeArea(
       child: StreamBuilder(
-        stream: mainBloc.userProfile,
+        stream: profilePageBloc.userProfile,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (!snapshot.hasData) {
             return Center(child: LoadSpinner());

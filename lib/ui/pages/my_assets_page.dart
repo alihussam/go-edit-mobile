@@ -65,6 +65,10 @@ class _MyAssetsPageState extends State<MyAssetsPage> {
               _formController.showToast('Cover image is required');
               return;
             }
+            if (_asset.resourceFile == null) {
+              _formController.showToast('Resource file is required');
+              return;
+            }
             myAssetsPageBloc.createAsset(_asset);
           }
         },
@@ -76,6 +80,7 @@ class _MyAssetsPageState extends State<MyAssetsPage> {
           _asset.price = state.price;
           _asset.currency = state.currency;
           _asset.imageFile = state.singleImage;
+          _asset.resourceFile = state.singleFile;
         },
         successScreenMessage: 'Success',
       );
