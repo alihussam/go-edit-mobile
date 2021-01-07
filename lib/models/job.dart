@@ -24,6 +24,46 @@ class Job {
       this.user,
       this.status});
 
+  bool hasAcceptedBid() {
+    bool isPlaced = false;
+    for (Bid b in this.bids) {
+      if (b.status == 'ACCEPTED') {
+        isPlaced = true;
+      }
+    }
+    return isPlaced;
+  }
+
+  Bid getAcceptedBid() {
+    Bid bid;
+    for (Bid b in this.bids) {
+      if (b.status == 'ACCEPTED') {
+        bid = b;
+      }
+    }
+    return bid;
+  }
+
+  bool isMyBidPlaced(String userId) {
+    bool isPlaced = false;
+    for (Bid b in this.bids) {
+      if (b.user.sId == userId) {
+        isPlaced = true;
+      }
+    }
+    return isPlaced;
+  }
+
+  Bid getMyBid(String userId) {
+    Bid bid;
+    for (Bid b in this.bids) {
+      if (b.user.sId == userId) {
+        bid = b;
+      }
+    }
+    return bid;
+  }
+
   Job.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
     currency = json['currency'];

@@ -5,6 +5,7 @@ import 'package:goedit/models/job.dart';
 import 'package:goedit/ui/pages/profile_page.dart';
 import 'package:goedit/ui/widgets/cards.dart';
 import 'package:goedit/ui/widgets/inputs.dart';
+import 'package:goedit/ui/widgets/loading.dart';
 import 'package:goedit/utils/field_validators.dart';
 import 'package:goedit/utils/global_navigation.dart';
 
@@ -37,95 +38,90 @@ class _JobDetailsState extends State<JobDetails> with FieldValidators {
 
   @override
   Widget build(BuildContext context) {
+    /// build job header
     Widget _buildHeader() {
       return Container(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              widget.job.title,
-              style: TextStyle(fontSize: 28),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Divider(),
-            SizedBox(
-              height: 10,
-            ),
-            // description tag
-            Container(
-              padding: EdgeInsets.all(10),
-              child: Text(
-                widget.job.description,
-                style: TextStyle(fontSize: 13),
+        child: StreamBuilder(
+          stream: jobDetailsBloc.currentJob,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              Job _job = snapshot.data;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(_job.title, style: TextStyle(fontSize: 28)),
+                  SizedBox(height: 10),
+                  Divider(),
+                  SizedBox(height: 10),
+                  // description tag
+                  Container(
+                    padding: EdgeInsets.all(10),
+                    child:
+                        Text(_job.description, style: TextStyle(fontSize: 13)),
+                  ),
+                  // budget and bid count
+                  Card(
+                    child: Container(
+                      padding: EdgeInsets.all(10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          // budget
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Budget:',
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
+                              SizedBox(width: 5),
+                              Text(
+                                  _job.currency + ' ' + _job.budget.toString()),
+                            ],
+                          ),
+                          SizedBox(height: 10),
+                          // bid count
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Number of bids:',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Text(_job.bids.length.toString()),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              );
+            }
+            return Container(
+              padding: EdgeInsets.all(20),
+              child: Center(
+                child: LoadSpinner(),
               ),
-            ),
-            // budget and bid count
-            Card(
-              child: Container(
-                padding: EdgeInsets.all(10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // budget
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Budget:',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        Text(
-                          widget.job.currency +
-                              ' ' +
-                              widget.job.budget.toString(),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    // bid count
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Number of bids:',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        Text(widget.job.bids.length.toString()),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            )
-          ],
+            );
+          },
         ),
       );
     }
 
-    Widget _buildPlaceBidForm() {
+    Widget _buildPlaceBidForm(Job currentJob) {
       return Container(
         padding: EdgeInsets.all(10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // place bid heading
             Text(
               'Place Your Bid Here',
               style: TextStyle(fontSize: 18),
             ),
-            SizedBox(
-              height: 10,
-            ),
+            SizedBox(height: 10),
             Form(
               key: _formKey,
               child: Column(
@@ -161,23 +157,21 @@ class _JobDetailsState extends State<JobDetails> with FieldValidators {
                 ],
               ),
             ),
+            SizedBox(height: 10),
             // create submit bid button
-            SizedBox(
-              height: 10,
-            ),
             StreamBuilder(
                 stream: jobDetailsBloc.isCreatingBid,
                 initialData: false,
                 builder: (context, snapshot) {
                   return FlatButton(
                     padding: EdgeInsets.all(10),
-                    onPressed: snapshot.data
-                        ? () {}
-                        : () {
+                    onPressed: !snapshot.data
+                        ? () {
                             if (_formKey.currentState.validate()) {
                               jobDetailsBloc.createBid(_myBid);
                             }
-                          },
+                          }
+                        : null,
                     child: snapshot.data
                         ? CircularProgressIndicator()
                         : Text(
@@ -229,7 +223,92 @@ class _JobDetailsState extends State<JobDetails> with FieldValidators {
       );
     }
 
-    Widget _buildJobOwnerPanel() {
+    Widget _buildBidTile(Bid bid) {
+      return Card(
+        child: Container(
+          padding: EdgeInsets.all(10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // user profile header
+              InkWell(
+                onTap: () {
+                  GlobalNavigation.key.currentState.push(MaterialPageRoute(
+                      builder: (context) => Scaffold(
+                            body: ProfilePage(user: bid.user),
+                          )));
+                },
+                child: Row(
+                  children: <Widget>[
+                    buildRoundedCornerImage(
+                        imageUrl:
+                            bid.user.imageUrl != null ? bid.user.imageUrl : ''),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Flexible(
+                      child: Text(
+                        bid.user.unifiedName,
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Text(bid.description),
+              SizedBox(
+                height: 10,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Bid Amount:',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Text(
+                    bid.currency + ' ' + bid.budget.toString(),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  FlatButton(
+                      onPressed: () {},
+                      child: FlatButton(
+                        child: Text('Message',
+                            style: TextStyle(color: Colors.white)),
+                        onPressed: () {},
+                        color: Colors.blue,
+                      )),
+                  FlatButton(
+                      onPressed: () {},
+                      child: FlatButton(
+                        child: Text('Accept',
+                            style: TextStyle(color: Colors.white)),
+                        onPressed: () =>
+                            jobDetailsBloc.acceptBid(bid.sId.toString()),
+                        color: Colors.green,
+                      )),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    Widget _buildBidList(Job job) {
       return Container(
         padding: EdgeInsets.all(10),
         child: Column(
@@ -243,110 +322,117 @@ class _JobDetailsState extends State<JobDetails> with FieldValidators {
               height: 20,
             ),
             // create a list of bids
-            ...List.generate(widget.job.bids.length, (index) {
-              return Card(
-                child: Container(
-                  padding: EdgeInsets.all(10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // user profile header
-                      InkWell(
-                        onTap: () {
-                          GlobalNavigation.key.currentState
-                              .push(MaterialPageRoute(
-                                  builder: (context) => Scaffold(
-                                        body: ProfilePage(
-                                            user: widget.job.bids
-                                                .elementAt(index)
-                                                .user),
-                                      )));
-                        },
-                        child: Row(
-                          children: <Widget>[
-                            buildRoundedCornerImage(
-                                imageUrl: widget.job.bids
-                                    .elementAt(index)
-                                    .user
-                                    .imageUrl),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Flexible(
-                              child: Text(
-                                widget.job.bids
-                                    .elementAt(index)
-                                    .user
-                                    .unifiedName,
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Text(widget.job.bids.elementAt(index).description),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Bid Amount:',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(
-                            width: 5,
-                          ),
-                          Text(
-                            widget.job.bids.elementAt(index).currency +
-                                ' ' +
-                                widget.job.bids
-                                    .elementAt(index)
-                                    .budget
-                                    .toString(),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          FlatButton(
-                              onPressed: () {},
-                              child: FlatButton(
-                                child: Text('Message',
-                                    style: TextStyle(color: Colors.white)),
-                                onPressed: () {},
-                                color: Colors.blue,
-                              )),
-                          FlatButton(
-                              onPressed: () {},
-                              child: FlatButton(
-                                child: Text('Accept',
-                                    style: TextStyle(color: Colors.white)),
-                                onPressed: () => jobDetailsBloc.acceptBid(widget
-                                    .job.bids
-                                    .elementAt(index)
-                                    .sId
-                                    .toString()),
-                                color: Colors.green,
-                              )),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              );
+            ...List.generate(job.bids.length, (index) {
+              return _buildBidTile(job.bids.elementAt(index));
             })
           ],
         ),
       );
+    }
+
+    Widget _buildAuthorJobControls(Job job) {
+      return Card(
+        child: Container(
+          padding: EdgeInsets.all(20),
+          child: Center(
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    buildRoundedCornerImage(
+                        imageUrl: job.getAcceptedBid().user.imageUrl),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Flexible(
+                      child: Text(
+                        job.getAcceptedBid().user.unifiedName,
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ),
+                // Text(
+                //     'STATUS: ${job.getAcceptedBid().status != null ? snapshot.data.status.toLowerCase() : ''}'),
+                SizedBox(
+                  height: 10,
+                ),
+                // complete job or show that its already completed
+                // ...(snapshot.data.status == 'COMPLETED'
+                //     ? []
+                //     : [
+                //         Row(
+                //           mainAxisAlignment: MainAxisAlignment.end,
+                //           children: [
+                //             FlatButton(
+                //                 onPressed: () => jobDetailsBloc.completeJob(),
+                //                 color: Colors.green,
+                //                 child: Text(
+                //                   'Complete Job',
+                //                   style: TextStyle(color: Colors.white),
+                //                 ))
+                //           ],
+                //         ),
+                //       ]),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    // Bidders view
+    _buildBiddersview() {
+      return StreamBuilder(
+          stream: jobDetailsBloc.currentJob,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              Job _job = snapshot.data;
+              // first check if the job already has hiring
+              // then check if current user has already placed a bid or
+              return _job.hasAcceptedBid()
+                  ? Text('Bid placed already')
+                  : jobDetailsBloc.isMyBidPlaced(_job)
+                      ? _buildSubmittedBidStatus(
+                          jobDetailsBloc.getMyBidPlaced(_job))
+                      : _buildPlaceBidForm(_job);
+            }
+            return Container(
+              padding: EdgeInsets.all(20),
+              child: Center(
+                child: LoadSpinner(),
+              ),
+            );
+          });
+    }
+
+    /// Job author view
+    _buildJobAutherView() {
+      return StreamBuilder(
+          stream: jobDetailsBloc.currentJob,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              Job _job = snapshot.data;
+              // first check if the job already has hiring
+              // then check if current user has already placed a bid or
+              return _job.hasAcceptedBid()
+                  ? _buildAuthorJobControls(_job)
+                  : _buildBidList(_job);
+            }
+            return Container(
+              padding: EdgeInsets.all(20),
+              child: Center(
+                child: LoadSpinner(),
+              ),
+            );
+          });
+    }
+
+    /// render view based on the user
+    Widget _renderViewBasedOnUser(Job job) {
+      return jobDetailsBloc.isJobOfCurrentUser(widget.job)
+          ? _buildJobAutherView()
+          : _buildBiddersview();
     }
 
     return Scaffold(
@@ -359,85 +445,7 @@ class _JobDetailsState extends State<JobDetails> with FieldValidators {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 _buildHeader(),
-                // check if owner viewing or not
-                ...(jobDetailsBloc.isJobOfCurrentUser(widget.job)
-                    ? [
-                        StreamBuilder(
-                            stream: jobDetailsBloc.acceptBidAction,
-                            builder: (context, snapshot) {
-                              if (snapshot.hasData) {
-                                return Card(
-                                  child: Container(
-                                    padding: EdgeInsets.all(20),
-                                    child: Center(
-                                      child: Column(
-                                        children: [
-                                          Row(
-                                            children: [
-                                              buildRoundedCornerImage(
-                                                  imageUrl: snapshot
-                                                      .data.user.imageUrl),
-                                              SizedBox(
-                                                width: 10,
-                                              ),
-                                              Flexible(
-                                                child: Text(
-                                                  snapshot
-                                                      .data.user.unifiedName,
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          Text(
-                                              'STATUS: ${snapshot.data.status != null ? snapshot.data.status.toLowerCase() : ''}'),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          // complete job or show that its already completed
-                                          ...(snapshot.data.status ==
-                                                  'COMPLETED'
-                                              ? []
-                                              : [
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.end,
-                                                    children: [
-                                                      FlatButton(
-                                                          onPressed: () =>
-                                                              jobDetailsBloc
-                                                                  .completeJob(),
-                                                          color: Colors.green,
-                                                          child: Text(
-                                                            'Complete Job',
-                                                            style: TextStyle(
-                                                                color: Colors
-                                                                    .white),
-                                                          ))
-                                                    ],
-                                                  ),
-                                                ]),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              }
-                              return _buildJobOwnerPanel();
-                            })
-                      ]
-                    : [
-                        StreamBuilder(
-                            stream: jobDetailsBloc.bid,
-                            builder: (context, snapshot) {
-                              if (snapshot.hasData) {
-                                return _buildSubmittedBidStatus(snapshot.data);
-                              }
-                              return _buildPlaceBidForm();
-                            }),
-                      ]),
+                _renderViewBasedOnUser(widget.job),
               ],
             ),
           ),

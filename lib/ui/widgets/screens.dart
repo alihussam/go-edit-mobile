@@ -36,6 +36,7 @@ class FullWidthFormScreen extends StatefulWidget {
   final String actionButtonTwoText;
   final Function() onActionButtonTwoPress;
   final Function(FullWidthFormState formState) onValueChange;
+  final bool buildImageInput;
 
   FullWidthFormScreen({
     this.headerTitle = 'Form',
@@ -47,6 +48,7 @@ class FullWidthFormScreen extends StatefulWidget {
     this.actionButtonTwoText = 'Cancel',
     this.onActionButtonTwoPress,
     this.onValueChange,
+    this.buildImageInput = true,
   });
   @override
   _FullWidthFormScreenState createState() =>
@@ -156,10 +158,15 @@ class _FullWidthFormScreenState extends State<FullWidthFormScreen>
                           widget.onValueChange(_formState);
                         }),
                       }),
-              SingleImageInput(
-                placeHolderText: '+ Add Cover image',
-                onImageSelect: onSingleImageInput,
-              ),
+              // check if to add cover
+              ...(widget.buildImageInput
+                  ? [
+                      SingleImageInput(
+                        placeHolderText: '+ Add Cover image',
+                        onImageSelect: onSingleImageInput,
+                      )
+                    ]
+                  : []),
               // BoxedSoloFilePicker(
               //   placeHolderText: '+ Add resource',
               //   onFileSelect: onFileSelect,

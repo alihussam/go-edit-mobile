@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:goedit/blocs/my_jobs_page_bloc.dart';
-import 'package:goedit/ui/pages/create_new_job_page.dart';
+import 'package:goedit/models/job.dart';
 import 'package:goedit/ui/pages/job_details.dart';
 import 'package:goedit/ui/widgets/cards.dart';
 import 'package:goedit/ui/widgets/inputs.dart';
 import 'package:goedit/ui/widgets/loading.dart';
+import 'package:goedit/ui/widgets/screens.dart';
 import 'package:goedit/utils/global_navigation.dart';
 
 class MyJobsPage extends StatefulWidget {
@@ -13,6 +14,8 @@ class MyJobsPage extends StatefulWidget {
 }
 
 class _MyJobsPageState extends State<MyJobsPage> {
+  FullWidthFormController _formController = FullWidthFormController();
+  Job _job = new Job();
   @override
   void initState() {
     myJobsPageBloc.init();
@@ -28,6 +31,52 @@ class _MyJobsPageState extends State<MyJobsPage> {
 
   @override
   Widget build(BuildContext context) {
+    // register listeners
+
+    myJobsPageBloc.isCreatingJob.listen(
+      (event) {
+        _formController.switchIsLoading(true);
+      },
+    ).onError((error) {
+      _formController.showToast(error);
+      _formController.switchIsLoading(false);
+    });
+    myJobsPageBloc.job.listen((event) {
+      if (event != null) {
+        myJobsPageBloc.getAllJobs();
+        _formController.switchIsLoading(false);
+        _formController.changeCurrentScreen(true);
+        _job = new Job();
+      }
+    }).onError((error) {
+      _formController.showToast(error);
+      _formController.switchIsLoading(false);
+    });
+
+    Widget _buildCreateJobForm() {
+      return FullWidthFormScreen(
+        actionButtonOneText: 'Save',
+        actionButtonTwoText: 'Cancel',
+        fullWidthFormController: _formController,
+        headerTitle: 'Create New Job',
+        buildImageInput: false,
+        onActionButtonOnePress: () {
+          if (_formController.validateForm()) {
+            myJobsPageBloc.createJob(_job);
+          }
+        },
+        onActionButtonTwoPress: () => GlobalNavigation.key.currentState.pop(),
+        onSuccessButtonPress: () => GlobalNavigation.key.currentState.pop(),
+        onValueChange: (FullWidthFormState state) {
+          _job.title = state.title;
+          _job.description = state.description;
+          _job.budget = state.price;
+          _job.currency = state.currency;
+        },
+        successScreenMessage: 'Success',
+      );
+    }
+
     Widget _buildJobList() {
       return Expanded(
         child: StreamBuilder(
@@ -74,7 +123,7 @@ class _MyJobsPageState extends State<MyJobsPage> {
           child: Text('Create new job',
               style: TextStyle(color: Colors.white, fontSize: 14)),
           onPressed: () => GlobalNavigation.key.currentState.push(
-              MaterialPageRoute(builder: (context) => CreateNewJobPage())),
+              MaterialPageRoute(builder: (context) => _buildCreateJobForm())),
         ),
       );
     }

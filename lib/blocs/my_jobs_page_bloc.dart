@@ -9,14 +9,21 @@ class MyJobsPageBloc {
   BehaviorSubject<bool> _isLoadingJobsController;
   BehaviorSubject<MetaData> _jobsMetaDataController;
   BehaviorSubject<List<Job>> _jobsController;
+  BehaviorSubject<bool> _isCreatingJobController;
+  BehaviorSubject<Job> _newJobController;
+
   Stream get jobs => _jobsController.stream;
   Stream get jobsMetaData => _jobsMetaDataController.stream;
   Stream get isLoadingJobs => _isLoadingJobsController.stream;
+  Stream get isCreatingJob => _isCreatingJobController.stream;
+  Stream get job => _newJobController.stream;
 
   init() {
     _jobsController = BehaviorSubject<List<Job>>();
     _jobsMetaDataController = BehaviorSubject<MetaData>();
     _isLoadingJobsController = BehaviorSubject<bool>();
+    _isCreatingJobController = BehaviorSubject<bool>();
+    _newJobController = BehaviorSubject<Job>();
   }
 
   getAllJobs({String searchString, String user, int limit, int page}) async {
@@ -51,11 +58,29 @@ class MyJobsPageBloc {
     }
   }
 
+  createJob(Job job) async {
+    try {
+      _isCreatingJobController.sink.add(true);
+      var data = await JobRepo.create(job);
+      _newJobController.sink.add(data['job']);
+    } catch (error) {
+      if (error is RequestException) {
+        _newJobController.sink.addError(error.message);
+      } else {
+        _newJobController.sink.addError(error.toString());
+      }
+    } finally {
+      _isCreatingJobController.sink.add(false);
+    }
+  }
+
   /// show alert message
   alert(String message) => mainBloc.alert(message);
 
   /// close all the opened streams
   dispose() {
+    _isCreatingJobController.close();
+    _newJobController.close();
     _jobsController.close();
     _jobsMetaDataController.close();
     _isLoadingJobsController.close();

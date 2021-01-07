@@ -30,7 +30,7 @@ class JobProv {
       var data = await RequestClient.post('jobs/bid',
           headers: {'authorization': accessToken},
           jsonEncodedBody: json.encode(bid.toJson()));
-      return {'bid': Bid.fromJson(data['data'])};
+      return {'job': Job.fromJson(data['data'])};
     } catch (exc) {
       print('exc here in create job');
       print(exc);

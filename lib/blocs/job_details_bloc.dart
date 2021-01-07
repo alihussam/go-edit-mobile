@@ -11,40 +11,56 @@ import 'package:rxdart/rxdart.dart';
 class JobDetailsBloc {
   GlobalKey<ScaffoldState> _key;
   Job _job;
+  BehaviorSubject<Job> _currentJobController;
   BehaviorSubject<bool> _isBidCreatingController;
-  BehaviorSubject<Bid> _newBidController;
-  BehaviorSubject<Job> _accpetBidActionController;
+  // BehaviorSubject<Bid> _newBidController;
+  // BehaviorSubject<Job> _accpetBidActionController;
   BehaviorSubject<bool> _isTakingActionOnBid;
 
-  Stream get bid => _newBidController.stream;
+  Stream get currentJob => _currentJobController.stream;
   Stream get isCreatingBid => _isBidCreatingController.stream;
-  Stream get acceptBidAction => _accpetBidActionController.stream;
   Stream get isTakingAction => _isTakingActionOnBid.stream;
+  // Stream get bid => _newBidController.stream;
+  // Stream get acceptBidAction => _accpetBidActionController.stream;
 
   init(GlobalKey<ScaffoldState> _key, Job job) {
     this._key = _key;
     this._job = job;
-    _newBidController = BehaviorSubject<Bid>();
+    _currentJobController = new BehaviorSubject<Job>();
+
+    // add current job
+    _currentJobController.sink.add(_job);
     _isBidCreatingController = BehaviorSubject<bool>();
     _isTakingActionOnBid = BehaviorSubject<bool>();
-    _accpetBidActionController = BehaviorSubject<Job>();
-    print(job.status);
-    if (job.status != null && job.status != 'PENDING') {
-      _accpetBidActionController.sink.add(job);
-    }
-    // here check if my bid is already present here
-    for (Bid b in job.bids) {
-      if (mainBloc.userProfileObject.sId == b.user.sId) {
-        _newBidController.sink.add(b);
-      }
-    }
+
+    // _newBidController = BehaviorSubject<Bid>();
+    // _accpetBidActionController = BehaviorSubject<Job>();
+    // print(job.status);
+    // if (job.status != null && job.status != 'PENDING') {
+    //   _accpetBidActionController.sink.add(job);
+    // }
+    // // here check if my bid is already present here
+    // for (Bid b in job.bids) {
+    //   if (mainBloc.userProfileObject.sId == b.user.sId) {
+    //     _newBidController.sink.add(b);
+    //   }
+    // }
+  }
+
+  bool isMyBidPlaced(Job job) {
+    return job.isMyBidPlaced(mainBloc.userProfileObject.sId);
+  }
+
+  Bid getMyBidPlaced(Job job) {
+    return job.getMyBid(mainBloc.userProfileObject.sId);
   }
 
   dispose() {
+    _currentJobController.close();
     _isBidCreatingController.close();
-    _newBidController.close();
-    _accpetBidActionController.close();
     _isTakingActionOnBid.close();
+    // _newBidController.close();
+    // _accpetBidActionController.close();
   }
 
   /// show alert message
@@ -62,9 +78,7 @@ class JobDetailsBloc {
     try {
       _isBidCreatingController.sink.add(true);
       var data = await JobRepo.bid(bid);
-      _isBidCreatingController.sink.add(false);
-      _newBidController.sink.add(data['bid']);
-      _accpetBidActionController.sink.add(data['bid']);
+      _currentJobController.sink.add(data['job']);
       // refresh previous job page
       jobPageBloc.refetchPreviousJobs();
     } catch (error) {
@@ -73,7 +87,8 @@ class JobDetailsBloc {
       } else {
         alert(error.toString());
       }
-      // _isBidCreatingController.sink.add(false);
+    } finally {
+      _isBidCreatingController.sink.add(false);
     }
   }
 
@@ -86,28 +101,29 @@ class JobDetailsBloc {
         'status': 'ACCEPTED',
       };
       var data = await JobRepo.bidAction(payload);
-      _accpetBidActionController.sink.add(data['job']);
-      _isTakingActionOnBid.sink.add(false);
+      _currentJobController.sink.add(data['job']);
       // refresh previous job page
+      jobPageBloc.refetchPreviousJobs();
     } catch (error) {
       if (error is RequestException) {
         alert(error.message);
       } else {
         alert(error.toString());
       }
+    } finally {
       _isTakingActionOnBid.sink.add(false);
     }
   }
 
   completeJob() async {
     try {
-      Map<String, String> payload = {
-        'job': _job.sId,
-        'status': 'COMPLETED',
-      };
-      var data = await JobRepo.jobAction(payload);
-      _accpetBidActionController.sink.add(data['job']);
-      jobPageBloc.refetchPreviousJobs();
+      // Map<String, String> payload = {
+      //   'job': _job.sId,
+      //   'status': 'COMPLETED',
+      // };
+      // var data = await JobRepo.jobAction(payload);
+      // _accpetBidActionController.sink.add(data['job']);
+      // jobPageBloc.refetchPreviousJobs();
       // refresh previous job page
     } catch (error) {
       if (error is RequestException) {
@@ -115,7 +131,7 @@ class JobDetailsBloc {
       } else {
         alert(error.toString());
       }
-      _isTakingActionOnBid.sink.add(false);
+      // _isTakingActionOnBid.sink.add(false);
     }
   }
 }

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:goedit/models/metaData.dart';
 import 'package:goedit/models/user.dart';
@@ -38,7 +39,31 @@ class UserProv {
       }
 
       // convert map to string, string
-      user.toJson().forEach((key, value) => body[key] = value?.toString());
+      // user.toJson().forEach((key, value) => body[key] = json.encode(value));
+      if (user.name != null) {
+        // body['name'] = json.encode(user.name);
+        body['firstName'] = user.name.firstName;
+        body['lastName'] = user.name.lastName;
+        if (user.name.middleName != null && user.name.middleName != '') {
+          body['middleName'] = user.name.middleName;
+        }
+      }
+
+      if (user.freelancerProfile != null) {
+        if (user.freelancerProfile.jobTitle != null &&
+            user.freelancerProfile.jobTitle != '') {
+          body['jobTitle'] = user.freelancerProfile.jobTitle;
+        }
+        if (user.freelancerProfile.bio != null &&
+            user.freelancerProfile.bio != '') {
+          body['bio'] = user.freelancerProfile.bio;
+        }
+      }
+
+      print(
+        'Body ::',
+      );
+      print(body);
 
       var data = await RequestClient.postMultiPart('user/updateProfile',
           headers: headers, payload: body, files: files);
