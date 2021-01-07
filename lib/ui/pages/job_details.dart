@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:goedit/blocs/job_details_bloc.dart';
 import 'package:goedit/models/bid.dart';
 import 'package:goedit/models/job.dart';
+import 'package:goedit/models/rating.dart';
 import 'package:goedit/ui/pages/profile_page.dart';
 import 'package:goedit/ui/widgets/cards.dart';
 import 'package:goedit/ui/widgets/inputs.dart';
@@ -20,6 +22,7 @@ class JobDetails extends StatefulWidget {
 
 class _JobDetailsState extends State<JobDetails> with FieldValidators {
   Bid _myBid;
+  Rating rating = new Rating(rating: 5, text: '');
   GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
   GlobalKey<ScaffoldState> _key = new GlobalKey<ScaffoldState>();
 
@@ -322,9 +325,18 @@ class _JobDetailsState extends State<JobDetails> with FieldValidators {
               height: 20,
             ),
             // create a list of bids
-            ...List.generate(job.bids.length, (index) {
-              return _buildBidTile(job.bids.elementAt(index));
-            })
+            ...(job.bids.length > 0
+                ? List.generate(job.bids.length, (index) {
+                    return _buildBidTile(job.bids.elementAt(index));
+                  })
+                : [
+                    Container(
+                      padding: EdgeInsets.all(20),
+                      child: Center(
+                        child: Text('There are no bids yet'),
+                      ),
+                    )
+                  ])
           ],
         ),
       );
@@ -357,23 +369,95 @@ class _JobDetailsState extends State<JobDetails> with FieldValidators {
                 SizedBox(
                   height: 10,
                 ),
-                // complete job or show that its already completed
-                // ...(snapshot.data.status == 'COMPLETED'
-                //     ? []
-                //     : [
-                //         Row(
-                //           mainAxisAlignment: MainAxisAlignment.end,
-                //           children: [
-                //             FlatButton(
-                //                 onPressed: () => jobDetailsBloc.completeJob(),
-                //                 color: Colors.green,
-                //                 child: Text(
-                //                   'Complete Job',
-                //                   style: TextStyle(color: Colors.white),
-                //                 ))
-                //           ],
-                //         ),
-                //       ]),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(),
+                    // complete job or show that its already completed
+                    ...(job.status != 'COMPLETED'
+                        ? [
+                            FlatButton(
+                                onPressed: () => jobDetailsBloc.completeJob(),
+                                color: Colors.green,
+                                child: Text(
+                                  'Complete Job',
+                                  style: TextStyle(color: Colors.white),
+                                ))
+                          ]
+                        : [
+                            Column(
+                              children: [
+                                Text('Job Status',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                                SizedBox(height: 5),
+                                Text(job.status),
+                              ],
+                            )
+                          ])
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    Widget _buildFreelanceJobControls(Job job) {
+      return Card(
+        child: Container(
+          padding: EdgeInsets.all(20),
+          child: Center(
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    buildRoundedCornerImage(
+                        imageUrl: job.getAcceptedBid().user.imageUrl),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Flexible(
+                      child: Text(
+                        job.getAcceptedBid().user.unifiedName,
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ),
+                // Text(
+                //     'STATUS: ${job.getAcceptedBid().status != null ? snapshot.data.status.toLowerCase() : ''}'),
+                SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(),
+                    // complete job or show that its already completed
+                    ...(job.status != 'COMPLETED'
+                        ? [
+                            FlatButton(
+                              child: Text('Message',
+                                  style: TextStyle(color: Colors.white)),
+                              onPressed: () {},
+                              color: Colors.blue,
+                            )
+                          ]
+                        : [
+                            Column(
+                              children: [
+                                Text('Job Status',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                                SizedBox(height: 5),
+                                Text(job.status),
+                              ],
+                            )
+                          ])
+                  ],
+                ),
               ],
             ),
           ),
@@ -391,7 +475,7 @@ class _JobDetailsState extends State<JobDetails> with FieldValidators {
               // first check if the job already has hiring
               // then check if current user has already placed a bid or
               return _job.hasAcceptedBid()
-                  ? Text('Bid placed already')
+                  ? _buildFreelanceJobControls(_job)
                   : jobDetailsBloc.isMyBidPlaced(_job)
                       ? _buildSubmittedBidStatus(
                           jobDetailsBloc.getMyBidPlaced(_job))
@@ -435,6 +519,73 @@ class _JobDetailsState extends State<JobDetails> with FieldValidators {
           : _buildBiddersview();
     }
 
+    Widget _buildRatingCard(bool isRatingAlreadyProvided) {
+      return Card(
+        child: Container(
+          padding: EdgeInsets.all(10),
+          child: Center(
+            child: Column(
+              children: [
+                Text(
+                  isRatingAlreadyProvided
+                      ? 'Thank you for rating'
+                      : 'Rate User',
+                  style: TextStyle(fontSize: 15),
+                ),
+                ...(isRatingAlreadyProvided
+                    ? []
+                    : [
+                        SizedBox(
+                          height: 10,
+                        ),
+                        RatingBar.builder(
+                          initialRating: rating.rating,
+                          minRating: 1,
+                          direction: Axis.horizontal,
+                          allowHalfRating: false,
+                          itemCount: 5,
+                          itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                          itemSize: 30,
+                          itemBuilder: (context, _) => Icon(
+                            Icons.star,
+                            color: Colors.amber,
+                          ),
+                          ignoreGestures: isRatingAlreadyProvided,
+                          onRatingUpdate: (value) {
+                            rating.rating = value;
+                          },
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        buildFormField(
+                            labelText: 'Add review',
+                            onChanged: (value) => rating.text = value.trim(),
+                            initialValue: rating.text,
+                            maxLines: 2),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            FlatButton(
+                              onPressed: () => jobDetailsBloc.provideRating(
+                                  rating.text, rating.rating),
+                              child: Text('Submit',
+                                  style: TextStyle(color: Colors.white)),
+                              color: Colors.blue,
+                            )
+                          ],
+                        ),
+                      ])
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       key: _key,
       body: SafeArea(
@@ -446,6 +597,7 @@ class _JobDetailsState extends State<JobDetails> with FieldValidators {
               children: [
                 _buildHeader(),
                 _renderViewBasedOnUser(widget.job),
+                _buildRatingCard(jobDetailsBloc.hasUserProvidedRating()),
               ],
             ),
           ),

@@ -83,7 +83,7 @@ class _HomePageState extends State<HomePage> {
           InkWell(
             onTap: () {},
             child: Text(
-              'More',
+              '',
               style: TextStyle(
                   fontSize: 14, color: Theme.of(context).primaryColor),
             ),

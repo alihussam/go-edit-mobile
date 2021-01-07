@@ -19,9 +19,8 @@ class Bid {
       this.status});
 
   Bid.fromJson(Map<String, dynamic> json) {
+    print('[Bid] fromJson');
     sId = json['_id'];
-    print('User::');
-    print(json);
     user = json['user'] != null && !(json['user'] is String)
         ? new User.fromJson(json['user'])
         : json['user'] is String

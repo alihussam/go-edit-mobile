@@ -4,6 +4,7 @@ import 'package:goedit/blocs/job_page_bloc.dart';
 import 'package:goedit/blocs/main.dart';
 import 'package:goedit/models/bid.dart';
 import 'package:goedit/models/job.dart';
+import 'package:goedit/models/rating.dart';
 import 'package:goedit/repositories/job.dart';
 import 'package:goedit/utils/request_exception.dart';
 import 'package:rxdart/rxdart.dart';
@@ -32,19 +33,6 @@ class JobDetailsBloc {
     _currentJobController.sink.add(_job);
     _isBidCreatingController = BehaviorSubject<bool>();
     _isTakingActionOnBid = BehaviorSubject<bool>();
-
-    // _newBidController = BehaviorSubject<Bid>();
-    // _accpetBidActionController = BehaviorSubject<Job>();
-    // print(job.status);
-    // if (job.status != null && job.status != 'PENDING') {
-    //   _accpetBidActionController.sink.add(job);
-    // }
-    // // here check if my bid is already present here
-    // for (Bid b in job.bids) {
-    //   if (mainBloc.userProfileObject.sId == b.user.sId) {
-    //     _newBidController.sink.add(b);
-    //   }
-    // }
   }
 
   bool isMyBidPlaced(Job job) {
@@ -72,6 +60,17 @@ class JobDetailsBloc {
 
   isJobOfCurrentUser(Job job) {
     return job.user.sId == mainBloc.userProfileObject.sId;
+  }
+
+  hasUserProvidedRating() {
+    String userId = mainBloc.userProfileObject.sId;
+    // first check which user is it
+    bool isEmployer = userId == _job.user.sId;
+    if (isEmployer) {
+      return _job.freelancerRating != null;
+    } else {
+      return _job.employerRating != null;
+    }
   }
 
   createBid(Bid bid) async {
@@ -117,14 +116,36 @@ class JobDetailsBloc {
 
   completeJob() async {
     try {
-      // Map<String, String> payload = {
-      //   'job': _job.sId,
-      //   'status': 'COMPLETED',
-      // };
-      // var data = await JobRepo.jobAction(payload);
-      // _accpetBidActionController.sink.add(data['job']);
-      // jobPageBloc.refetchPreviousJobs();
+      Map<String, String> payload = {
+        'job': _job.sId,
+        'status': 'COMPLETED',
+      };
+      var data = await JobRepo.jobAction(payload);
+      _currentJobController.sink.add(data['job']);
       // refresh previous job page
+      jobPageBloc.refetchPreviousJobs();
+    } catch (error) {
+      if (error is RequestException) {
+        alert(error.message);
+      } else {
+        alert(error.toString());
+      }
+      // _isTakingActionOnBid.sink.add(false);
+    }
+  }
+
+  provideRating(String text, double rating) async {
+    try {
+      Map<String, String> payload = {
+        'job': _job.sId,
+        'user': mainBloc.userProfileObject.sId,
+        'text': text == '' ? null : text,
+        'rating': rating.toString(),
+      };
+      var data = await JobRepo.provideRating(payload);
+      _currentJobController.sink.add(data['job']);
+      // refresh previous job page
+      jobPageBloc.refetchPreviousJobs();
     } catch (error) {
       if (error is RequestException) {
         alert(error.message);

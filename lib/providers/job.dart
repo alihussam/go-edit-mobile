@@ -70,6 +70,22 @@ class JobProv {
     }
   }
 
+  static Future<Map> provideRating(
+    String accessToken,
+    Map<String, String> payload,
+  ) async {
+    try {
+      var data = await RequestClient.post('jobs/provideRating',
+          headers: {'authorization': accessToken},
+          jsonEncodedBody: json.encode(payload));
+      return {'job': Job.fromJson(data['data'])};
+    } catch (exc) {
+      print('exc here in provide rating job');
+      print(exc);
+      throw exc;
+    }
+  }
+
   /// get All Jobs provider
   static Future<Map> getAll(
       String accessToken, Map<String, dynamic> queryParams) async {

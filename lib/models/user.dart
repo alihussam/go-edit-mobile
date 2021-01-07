@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:goedit/models/employerProfile.dart';
 import 'package:goedit/models/freelancerProfile.dart';
 import 'package:goedit/models/name.dart';
+import 'package:goedit/models/rating.dart';
 
 class User {
   String sId;
@@ -20,6 +21,7 @@ class User {
   List<String> portfolioUrls = [];
   File profileImage;
   List<File> portfolioImages = [];
+  List<Rating> ratings = [];
 
   User(
       {this.sId,
@@ -34,7 +36,8 @@ class User {
       this.employerProfile,
       this.createdAt,
       this.updatedAt,
-      this.portfolioUrls});
+      this.portfolioUrls,
+      this.ratings});
 
   String get unifiedName {
     String name = '';
@@ -53,6 +56,7 @@ class User {
   }
 
   User.fromJson(Map<String, dynamic> json) {
+    print('[UserModel] fromJson');
     sId = json['_id'];
     name = json['name'] != null ? new Name.fromJson(json['name']) : null;
     email = json['email'];
@@ -74,6 +78,13 @@ class User {
     portfolioUrls = json['portfolioUrls'] != null
         ? json['portfolioUrls'].cast<String>()
         : [];
+    if (json['ratings'] != null) {
+      List<Rating> ratingsList = [];
+      for (var entry in json['ratings']) {
+        ratings.add(Rating.fromJson(entry));
+      }
+      ratings = ratingsList;
+    }
   }
 
   Map<String, dynamic> toJson() {

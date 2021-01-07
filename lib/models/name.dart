@@ -17,6 +17,7 @@ class Name {
   }
 
   Name.fromJson(Map<String, dynamic> json) {
+    print('[NameModel] fromJson');
     firstName = json['firstName'];
     middleName = json['middleName'];
     lastName = json['lastName'];
