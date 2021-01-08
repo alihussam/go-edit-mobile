@@ -1,8 +1,10 @@
 import 'package:goedit/blocs/main.dart';
 import 'package:goedit/models/asset.dart';
+import 'package:goedit/models/job.dart';
 import 'package:goedit/models/metaData.dart';
 import 'package:goedit/models/user.dart';
 import 'package:goedit/repositories/asset.dart';
+import 'package:goedit/repositories/job.dart';
 import 'package:goedit/repositories/user.dart';
 import 'package:goedit/utils/request_exception.dart';
 import 'package:rxdart/subjects.dart';
@@ -12,6 +14,7 @@ class HomeBloc {
   BehaviorSubject<bool> _isLoadingAssetsController;
   BehaviorSubject<MetaData> _assetMetaDataController;
   BehaviorSubject<List<Asset>> _assetsController;
+  BehaviorSubject<List<Job>> _jobsController;
   BehaviorSubject<MetaData> _usersMetaDataController;
   BehaviorSubject<List<User>> _usersController;
   BehaviorSubject<bool> _isLoadingUsersController;
@@ -24,6 +27,7 @@ class HomeBloc {
   Stream get users => _usersController.stream;
   Stream get usersMetaData => _usersMetaDataController.stream;
   Stream get isLoadingUsers => _isLoadingUsersController.stream;
+  Stream get jobs => _jobsController.stream;
 
   /// init home bloc
   init() {
@@ -31,6 +35,7 @@ class HomeBloc {
     _isLoadingAssetsController = BehaviorSubject<bool>();
     _assetMetaDataController = BehaviorSubject<MetaData>();
     _assetsController = BehaviorSubject<List<Asset>>();
+    _jobsController = BehaviorSubject<List<Job>>();
     _usersMetaDataController = BehaviorSubject<MetaData>();
     _usersController = BehaviorSubject<List<User>>();
     _isLoadingUsersController = BehaviorSubject<bool>();
@@ -60,6 +65,43 @@ class HomeBloc {
       }).toList();
       _assetsController.add(_finalList);
       _assetMetaDataController.add(res['metaData']);
+      _isLoadingAssetsController.add(false);
+    } catch (exc) {
+      _isLoadingAssetsController.add(false);
+
+      /// check if error was due to auth token
+      if (exc is RequestException) {
+        if (exc.errorKey == 'JWT_MISSING' ||
+            exc.errorKey == 'JWT_EXPIRED' ||
+            exc.errorKey == 'JWT_INVALID') {
+          mainBloc.logout();
+        }
+        alert(exc.message);
+      } else {
+        alert(exc.toString());
+      }
+    }
+  }
+
+  getAllJobs({String searchString, String user, int limit, int page}) async {
+    _isLoadingAssetsController.add(true);
+    try {
+      // construct query first
+      Map<String, dynamic> queryParams = {};
+      // if (searchString != null) queryParams['searchString'] = searchString;
+      // if (user != null) queryParams['user'] = user;
+      // if (limit != null) queryParams['limit'] = limit;
+      // if (page != null) queryParams['page'] = page;
+
+      // make the call
+      var res = await JobRepo.getAll(queryParams);
+      List<Job> _finalList = res['entries'];
+      // _finalList = _finalList.map((e) {
+      //   e.isCurrentUsersAsset = (e.user.sId == mainBloc.user.sId);
+      //   return e;
+      // }).toList();
+      _jobsController.add(_finalList);
+      // _assetMetaDataController.add(res['metaData']);
       _isLoadingAssetsController.add(false);
     } catch (exc) {
       _isLoadingAssetsController.add(false);
