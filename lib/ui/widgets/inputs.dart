@@ -14,10 +14,12 @@ Widget buildFormField(
     Function validator,
     bool obscureText = false,
     String initialValue,
-    int maxLines = 1}) {
+    int maxLines = 1,
+    controller}) {
   return Container(
     margin: EdgeInsets.symmetric(vertical: 12),
     child: TextFormField(
+      controller: controller,
       onChanged: onChanged,
       validator: validator,
       initialValue: initialValue,

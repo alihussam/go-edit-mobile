@@ -5,6 +5,7 @@ import 'package:goedit/blocs/main.dart';
 import 'package:goedit/models/bid.dart';
 import 'package:goedit/models/job.dart';
 import 'package:goedit/models/rating.dart';
+import 'package:goedit/models/user.dart';
 import 'package:goedit/repositories/job.dart';
 import 'package:goedit/utils/request_exception.dart';
 import 'package:rxdart/rxdart.dart';
@@ -12,6 +13,7 @@ import 'package:rxdart/rxdart.dart';
 class JobDetailsBloc {
   GlobalKey<ScaffoldState> _key;
   Job _job;
+  User _freelancer;
   BehaviorSubject<Job> _currentJobController;
   BehaviorSubject<bool> _isBidCreatingController;
   // BehaviorSubject<Bid> _newBidController;
@@ -63,13 +65,37 @@ class JobDetailsBloc {
   }
 
   hasUserProvidedRating() {
-    String userId = mainBloc.userProfileObject.sId;
-    // first check which user is it
-    bool isEmployer = userId == _job.user.sId;
-    if (isEmployer) {
-      return _job.freelancerRating != null;
+    bool isRatingGiven = false;
+    if (isJobOfCurrentUser(_job)) {
+      isRatingGiven = _job.freelancerRating != null;
     } else {
-      return _job.employerRating != null;
+      isRatingGiven = _job.employerRating != null;
+    }
+    print('what');
+    print(isRatingGiven);
+    return isRatingGiven;
+  }
+
+  User getOppositUser() {
+    if (isJobOfCurrentUser(_job)) {
+      print('Accepted');
+      Bid bid = _job.getAcceptedBid();
+      if (bid != null) {
+        return bid.user;
+      } else if (_freelancer != null) {
+        return _freelancer;
+      }
+      return new User();
+    }
+    print('employer');
+    return _job.user;
+  }
+
+  Rating getRatingIProvided() {
+    if (isJobOfCurrentUser(_job)) {
+      return _job.freelancerRating;
+    } else {
+      return _job.employerRating;
     }
   }
 
@@ -101,6 +127,7 @@ class JobDetailsBloc {
       };
       var data = await JobRepo.bidAction(payload);
       _currentJobController.sink.add(data['job']);
+      _freelancer = data['job'];
       // refresh previous job page
       jobPageBloc.refetchPreviousJobs();
     } catch (error) {
@@ -114,11 +141,14 @@ class JobDetailsBloc {
     }
   }
 
-  completeJob() async {
+  completeJob(String ccNumber, String ccHolder, String ccCvv) async {
     try {
       Map<String, String> payload = {
         'job': _job.sId,
         'status': 'COMPLETED',
+        'ccNumber': ccNumber,
+        'ccHolder': ccHolder,
+        'ccCvv': ccCvv,
       };
       var data = await JobRepo.jobAction(payload);
       _currentJobController.sink.add(data['job']);

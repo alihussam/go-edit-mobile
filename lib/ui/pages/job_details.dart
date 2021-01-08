@@ -1,9 +1,11 @@
+import 'package:credit_card_input_form/credit_card_input_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:goedit/blocs/job_details_bloc.dart';
 import 'package:goedit/models/bid.dart';
 import 'package:goedit/models/job.dart';
 import 'package:goedit/models/rating.dart';
+import 'package:goedit/models/user.dart';
 import 'package:goedit/ui/pages/profile_page.dart';
 import 'package:goedit/ui/widgets/cards.dart';
 import 'package:goedit/ui/widgets/inputs.dart';
@@ -24,7 +26,11 @@ class _JobDetailsState extends State<JobDetails> with FieldValidators {
   Bid _myBid;
   Rating rating = new Rating(rating: 5, text: '');
   GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
+  GlobalKey<FormState> _creditCardFormKey = new GlobalKey<FormState>();
   GlobalKey<ScaffoldState> _key = new GlobalKey<ScaffoldState>();
+  String ccNumber;
+  String ccHolder;
+  String ccCvv;
 
   @override
   void initState() {
@@ -42,74 +48,57 @@ class _JobDetailsState extends State<JobDetails> with FieldValidators {
   @override
   Widget build(BuildContext context) {
     /// build job header
-    Widget _buildHeader() {
+    Widget _buildHeader(Job _job) {
       return Container(
-        child: StreamBuilder(
-          stream: jobDetailsBloc.currentJob,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              Job _job = snapshot.data;
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(_job.title, style: TextStyle(fontSize: 28)),
-                  SizedBox(height: 10),
-                  Divider(),
-                  SizedBox(height: 10),
-                  // description tag
-                  Container(
-                    padding: EdgeInsets.all(10),
-                    child:
-                        Text(_job.description, style: TextStyle(fontSize: 13)),
-                  ),
-                  // budget and bid count
-                  Card(
-                    child: Container(
-                      padding: EdgeInsets.all(10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          // budget
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text('Budget:',
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
-                              SizedBox(width: 5),
-                              Text(
-                                  _job.currency + ' ' + _job.budget.toString()),
-                            ],
-                          ),
-                          SizedBox(height: 10),
-                          // bid count
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Number of bids:',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              Text(_job.bids.length.toString()),
-                            ],
-                          ),
-                        ],
-                      ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(_job.title, style: TextStyle(fontSize: 28)),
+            SizedBox(height: 10),
+            Divider(),
+            SizedBox(height: 10),
+            // description tag
+            Container(
+              padding: EdgeInsets.all(10),
+              child: Text(_job.description, style: TextStyle(fontSize: 13)),
+            ),
+            // budget and bid count
+            Card(
+              child: Container(
+                padding: EdgeInsets.all(10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // budget
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Budget:',
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        SizedBox(width: 5),
+                        Text(_job.currency + ' ' + _job.budget.toString()),
+                      ],
                     ),
-                  )
-                ],
-              );
-            }
-            return Container(
-              padding: EdgeInsets.all(20),
-              child: Center(
-                child: LoadSpinner(),
+                    SizedBox(height: 10),
+                    // bid count
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Number of bids:',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Text(_job.bids.length.toString()),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            );
-          },
+            )
+          ],
         ),
       );
     }
@@ -224,6 +213,56 @@ class _JobDetailsState extends State<JobDetails> with FieldValidators {
           ],
         ),
       );
+    }
+
+    _buildPaymentModal() {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              actions: [
+                FlatButton(
+                    onPressed: () {
+                      if (_creditCardFormKey.currentState.validate()) {
+                        GlobalNavigation.key.currentState.pop();
+                        jobDetailsBloc.completeJob(ccNumber, ccHolder, ccCvv);
+                      }
+                    },
+                    child: Text('Submit')),
+              ],
+              content: Container(
+                padding: EdgeInsets.symmetric(vertical: 20),
+                child: SingleChildScrollView(
+                  child: Form(
+                    key: _creditCardFormKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text('Payment Info'),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        buildFormField(
+                            labelText: 'Credit Card Number',
+                            controller: ccNumberMask,
+                            validator: (value) => ccNumberValidate(value),
+                            onChanged: (value) => ccNumber = value.trim()),
+                        buildFormField(
+                            labelText: 'Card Holder Name',
+                            validator: (value) => validateRequired(value),
+                            onChanged: (value) => ccHolder = value.trim()),
+                        buildFormField(
+                            labelText: 'CVV',
+                            validator: (value) => ccCvvValidate(value),
+                            controller: ccCvvMask,
+                            onChanged: (value) => ccCvv = value.trim()),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          });
     }
 
     Widget _buildBidTile(Bid bid) {
@@ -343,6 +382,7 @@ class _JobDetailsState extends State<JobDetails> with FieldValidators {
     }
 
     Widget _buildAuthorJobControls(Job job) {
+      User oppositUser = jobDetailsBloc.getOppositUser();
       return Card(
         child: Container(
           padding: EdgeInsets.all(20),
@@ -351,14 +391,13 @@ class _JobDetailsState extends State<JobDetails> with FieldValidators {
               children: [
                 Row(
                   children: [
-                    buildRoundedCornerImage(
-                        imageUrl: job.getAcceptedBid().user.imageUrl),
+                    buildRoundedCornerImage(imageUrl: oppositUser.imageUrl),
                     SizedBox(
                       width: 10,
                     ),
                     Flexible(
                       child: Text(
-                        job.getAcceptedBid().user.unifiedName,
+                        oppositUser.unifiedName,
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -377,7 +416,10 @@ class _JobDetailsState extends State<JobDetails> with FieldValidators {
                     ...(job.status != 'COMPLETED'
                         ? [
                             FlatButton(
-                                onPressed: () => jobDetailsBloc.completeJob(),
+                                onPressed: () {
+                                  // open a payment modal
+                                  _buildPaymentModal();
+                                },
                                 color: Colors.green,
                                 child: Text(
                                   'Complete Job',
@@ -405,6 +447,7 @@ class _JobDetailsState extends State<JobDetails> with FieldValidators {
     }
 
     Widget _buildFreelanceJobControls(Job job) {
+      User oppositUser = jobDetailsBloc.getOppositUser();
       return Card(
         child: Container(
           padding: EdgeInsets.all(20),
@@ -413,14 +456,13 @@ class _JobDetailsState extends State<JobDetails> with FieldValidators {
               children: [
                 Row(
                   children: [
-                    buildRoundedCornerImage(
-                        imageUrl: job.getAcceptedBid().user.imageUrl),
+                    buildRoundedCornerImage(imageUrl: oppositUser.imageUrl),
                     SizedBox(
                       width: 10,
                     ),
                     Flexible(
                       child: Text(
-                        job.getAcceptedBid().user.unifiedName,
+                        oppositUser.unifiedName,
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -532,32 +574,38 @@ class _JobDetailsState extends State<JobDetails> with FieldValidators {
                       : 'Rate User',
                   style: TextStyle(fontSize: 15),
                 ),
+                SizedBox(
+                  height: 10,
+                ),
+                RatingBar.builder(
+                  initialRating: isRatingAlreadyProvided
+                      ? jobDetailsBloc.getRatingIProvided().rating
+                      : rating.rating,
+                  minRating: 1,
+                  direction: Axis.horizontal,
+                  allowHalfRating: false,
+                  itemCount: 5,
+                  itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                  itemSize: 30,
+                  itemBuilder: (context, _) => Icon(
+                    Icons.star,
+                    color: Colors.amber,
+                  ),
+                  ignoreGestures: isRatingAlreadyProvided,
+                  onRatingUpdate: (value) {
+                    rating.rating = value;
+                  },
+                ),
+                SizedBox(
+                  height: 10,
+                ),
                 ...(isRatingAlreadyProvided
-                    ? []
+                    ? [
+                        Text(jobDetailsBloc.getRatingIProvided().text != null
+                            ? jobDetailsBloc.getRatingIProvided().text
+                            : ''),
+                      ]
                     : [
-                        SizedBox(
-                          height: 10,
-                        ),
-                        RatingBar.builder(
-                          initialRating: rating.rating,
-                          minRating: 1,
-                          direction: Axis.horizontal,
-                          allowHalfRating: false,
-                          itemCount: 5,
-                          itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                          itemSize: 30,
-                          itemBuilder: (context, _) => Icon(
-                            Icons.star,
-                            color: Colors.amber,
-                          ),
-                          ignoreGestures: isRatingAlreadyProvided,
-                          onRatingUpdate: (value) {
-                            rating.rating = value;
-                          },
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
                         buildFormField(
                             labelText: 'Add review',
                             onChanged: (value) => rating.text = value.trim(),
@@ -592,13 +640,32 @@ class _JobDetailsState extends State<JobDetails> with FieldValidators {
         child: SingleChildScrollView(
           child: Container(
             padding: EdgeInsets.all(10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _buildHeader(),
-                _renderViewBasedOnUser(widget.job),
-                _buildRatingCard(jobDetailsBloc.hasUserProvidedRating()),
-              ],
+            child: StreamBuilder(
+              stream: jobDetailsBloc.currentJob,
+              builder: (context, snapshot) {
+                // show loader until no job found
+                if (!snapshot.hasData || snapshot.hasError) {
+                  return Center(
+                    child: LoadSpinner(),
+                  );
+                }
+                // build complete screens
+                Job _job = snapshot.data;
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _buildHeader(_job),
+                    _renderViewBasedOnUser(_job),
+                    // only show rating when job is complete
+                    ...(_job.status == 'COMPLETED'
+                        ? [
+                            _buildRatingCard(
+                                jobDetailsBloc.hasUserProvidedRating()),
+                          ]
+                        : [])
+                  ],
+                );
+              },
             ),
           ),
         ),

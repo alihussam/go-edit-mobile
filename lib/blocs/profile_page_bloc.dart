@@ -1,5 +1,6 @@
 import 'package:goedit/blocs/main.dart';
 import 'package:goedit/models/user.dart';
+import 'package:goedit/repositories/auth.dart';
 import 'package:goedit/repositories/user.dart';
 import 'package:goedit/utils/request_exception.dart';
 import 'package:rxdart/subjects.dart';
@@ -63,6 +64,20 @@ class ProfilePageBloc {
       }
     } finally {
       _isUpdatingProfileController.sink.add(false);
+    }
+  }
+
+  getProfile() async {
+    try {
+      var data = await AuthRepo.getProfile();
+      mainBloc.updateUserProfile(data['profile']);
+      _userProfileController.sink.add(data['profile']);
+    } catch (error) {
+      if (error is RequestException) {
+        alert(error.message);
+      } else {
+        alert(error.toString());
+      }
     }
   }
 

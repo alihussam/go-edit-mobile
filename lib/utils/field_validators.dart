@@ -1,4 +1,4 @@
-// import 'package:flutter_masked_text/flutter_masked_text.dart';
+import 'package:flutter_masked_text/flutter_masked_text.dart';
 
 mixin FieldValidators {
   String validateRequired(String value) {
@@ -33,6 +33,16 @@ mixin FieldValidators {
     return null;
   }
 
+  String ccNumberValidate(String value) {
+    if (value.trim().length != 19) return "Enter valid credit card number";
+    return null;
+  }
+
+  String ccCvvValidate(String value) {
+    if (value.trim().length != 5) return "Enter valid cvv";
+    return null;
+  }
+
   // String validatePhone(String value) {
   //   Pattern pattern = r'^(?:(([+]|00)92)|0)((3[0-6][0-9]))(\d{7})$';
   //   RegExp regExp = new RegExp(pattern);
@@ -41,5 +51,7 @@ mixin FieldValidators {
   //   return null;
   // }
 
+  var ccNumberMask = new MaskedTextController(mask: '0000-0000-0000-0000');
+  var ccCvvMask = new MaskedTextController(mask: '00/00');
   // var phoneMask = new MaskedTextController(mask: '00000000000');
 }

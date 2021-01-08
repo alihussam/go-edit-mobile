@@ -64,7 +64,7 @@ class JobProv {
           jsonEncodedBody: json.encode(payload));
       return {'job': Job.fromJson(data['data'])};
     } catch (exc) {
-      print('exc here in bid action job');
+      print('exc here in job action job');
       print(exc);
       throw exc;
     }
@@ -90,6 +90,8 @@ class JobProv {
   static Future<Map> getAll(
       String accessToken, Map<String, dynamic> queryParams) async {
     try {
+      print('GetALll jobs query params');
+      print(queryParams);
       var data = await RequestClient.get('jobs/getAll',
           headers: {'authorization': accessToken}, queryParams: queryParams);
       MetaData metaData = MetaData.fromJson(data['data']['metaData']);

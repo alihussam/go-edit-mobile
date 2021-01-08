@@ -29,6 +29,9 @@ class _ProfilePageState extends State<ProfilePage> with FieldValidators {
   @override
   void initState() {
     profilePageBloc.init(widget.user);
+    if (widget.user == null) {
+      profilePageBloc.getProfile();
+    }
     super.initState();
   }
 

@@ -32,7 +32,7 @@ class MyJobsPageBloc {
       // construct query first
       Map<String, dynamic> queryParams = {};
       if (searchString != null) queryParams['searchString'] = searchString;
-      if (user != null) queryParams['user'] = mainBloc.userProfileObject.sId;
+      queryParams['user'] = mainBloc.userProfileObject.sId;
       if (limit != null) queryParams['limit'] = limit;
       if (page != null) queryParams['page'] = page;
 
