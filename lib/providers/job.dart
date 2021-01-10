@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:goedit/models/bid.dart';
 import 'package:goedit/models/job.dart';
+import 'package:goedit/models/message.dart';
+import 'package:goedit/models/chat.model.dart';
 import 'package:goedit/models/metaData.dart';
 import 'package:goedit/utils/request.dart';
 
@@ -108,6 +110,73 @@ class JobProv {
       };
     } catch (exc) {
       print('exc here in get all jobs');
+      print(exc);
+      throw exc;
+    }
+  }
+
+  // ************************
+  // CHAT
+  // ************************
+  static Future<Map> createChatMessage(
+    String accessToken,
+    Message message,
+  ) async {
+    try {
+      var data = await RequestClient.post('chat/create',
+          headers: {'authorization': accessToken},
+          jsonEncodedBody: json.encode(message.toJson()));
+      return {'message': Message.fromJson(data['data'])};
+    } catch (exc) {
+      print('exc here in create message');
+      print(exc);
+      throw exc;
+    }
+  }
+
+  /// get All Jobs provider
+  static Future<Map> getAllMessages(
+      String accessToken, Map<String, dynamic> queryParams) async {
+    try {
+      print('GetALll messages query params');
+      print(queryParams);
+      var data = await RequestClient.get('chat/getAllMessages',
+          headers: {'authorization': accessToken}, queryParams: queryParams);
+      List<Message> entries = [];
+      for (var entry in data['data']) {
+        entries.add(Message.fromJson(entry));
+      }
+
+      return {
+        'entries': entries,
+      };
+    } catch (exc) {
+      print('exc here in get chats');
+      print(exc);
+      throw exc;
+    }
+  }
+
+  /// get All Jobs provider
+  static Future<Map> getAllChats(
+      String accessToken, Map<String, dynamic> queryParams) async {
+    try {
+      print('GetALll chats query params');
+      print(queryParams);
+      var data = await RequestClient.get('chat/getAll',
+          headers: {'authorization': accessToken}, queryParams: queryParams);
+      MetaData metaData = MetaData.fromJson(data['data']['metaData']);
+      List<Chat> entries = [];
+      for (var entry in data['data']['entries']) {
+        entries.add(Chat.fromJson(entry));
+      }
+
+      return {
+        'entries': entries,
+        'metaData': metaData,
+      };
+    } catch (exc) {
+      print('exc here in get chats');
       print(exc);
       throw exc;
     }

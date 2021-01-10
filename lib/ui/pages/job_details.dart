@@ -1,4 +1,4 @@
-import 'package:credit_card_input_form/credit_card_input_form.dart';
+// import 'package:credit_card_input_form/credit_card_input_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:goedit/blocs/job_details_bloc.dart';
@@ -6,6 +6,7 @@ import 'package:goedit/models/bid.dart';
 import 'package:goedit/models/job.dart';
 import 'package:goedit/models/rating.dart';
 import 'package:goedit/models/user.dart';
+import 'package:goedit/ui/pages/chats_page.dart';
 import 'package:goedit/ui/pages/profile_page.dart';
 import 'package:goedit/ui/widgets/cards.dart';
 import 'package:goedit/ui/widgets/inputs.dart';
@@ -330,7 +331,12 @@ class _JobDetailsState extends State<JobDetails> with FieldValidators {
                       child: FlatButton(
                         child: Text('Message',
                             style: TextStyle(color: Colors.white)),
-                        onPressed: () {},
+                        onPressed: () {
+                          GlobalNavigation.key.currentState.push(
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      OneToOneChat(user: bid.user)));
+                        },
                         color: Colors.blue,
                       )),
                   FlatButton(

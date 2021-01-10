@@ -42,7 +42,6 @@ class HomeBloc {
   }
 
   changeActivePage(int index) {
-    print('Home:: ' + index.toString());
     _activePageController.add(index);
   }
 

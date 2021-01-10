@@ -30,7 +30,8 @@ class User {
       this.password,
       this.isEmailVerified,
       this.role,
-      this.imageUrl,
+      this.imageUrl =
+          'https://s3.amazonaws.com/37assets/svn/765-default-avatar.png',
       this.isDisabled,
       this.freelancerProfile,
       this.employerProfile,

@@ -4,6 +4,7 @@ import 'package:goedit/ui/pages/home_page.dart';
 import 'package:goedit/ui/pages/jobs_page.dart';
 import 'package:goedit/ui/pages/my_assets_page.dart';
 import 'package:goedit/ui/pages/my_jobs_page.dart';
+import 'package:goedit/ui/pages/chats_page.dart';
 import 'package:goedit/ui/pages/profile_page.dart';
 import 'package:goedit/ui/widgets/loading.dart';
 import 'package:goedit/ui/widgets/minimal_drawer.dart';
@@ -59,10 +60,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 GlobalNavigation.key.currentState.pop(),
               }),
       DrawerMenuOptionModel(
+          'Messages',
+          Icons.message,
+          () => {
+                homeBloc.changeActivePage(4),
+                GlobalNavigation.key.currentState.pop(),
+              }),
+      DrawerMenuOptionModel(
           'My Profile',
           Icons.account_circle,
           () => {
-                homeBloc.changeActivePage(4),
+                homeBloc.changeActivePage(5),
                 GlobalNavigation.key.currentState.pop(),
               }),
     ];
@@ -72,6 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
       JobPage(),
       MyJobsPage(),
       MyAssetsPage(),
+      ChatPage(),
       ProfilePage(),
     ];
 

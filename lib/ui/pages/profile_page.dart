@@ -8,12 +8,14 @@ import 'package:goedit/models/employerProfile.dart';
 import 'package:goedit/models/freelancerProfile.dart';
 import 'package:goedit/models/name.dart';
 import 'package:goedit/models/user.dart';
+import 'package:goedit/ui/pages/chats_page.dart';
 import 'package:goedit/ui/widgets/inputs.dart';
 import 'package:goedit/ui/widgets/inputs/gridview_image_picker.dart';
 import 'package:goedit/ui/widgets/inputs/profileview_image_picker.dart';
 import 'package:goedit/ui/widgets/loading.dart';
-import 'package:flutter_tags/flutter_tags.dart';
+// import 'package:flutter_tags/flutter_tags.dart';
 import 'package:goedit/utils/field_validators.dart';
+import 'package:goedit/utils/global_navigation.dart';
 
 class ProfilePage extends StatefulWidget {
   final User user;
@@ -298,7 +300,23 @@ class _ProfilePageState extends State<ProfilePage> with FieldValidators {
       return Stack(
         children: [
           // update button
-          ...(widget.user == null ? [_createUpdateProfileButton()] : []),
+          ...(widget.user == null
+              ? [_createUpdateProfileButton()]
+              : [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      IconButton(
+                          icon: Icon(Icons.message),
+                          onPressed: () {
+                            GlobalNavigation.key.currentState.push(
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        OneToOneChat(user: widget.user)));
+                          })
+                    ],
+                  )
+                ]),
           Container(
             padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
             child: Column(
