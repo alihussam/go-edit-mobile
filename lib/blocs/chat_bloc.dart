@@ -1,4 +1,5 @@
 import 'package:dash_chat/dash_chat.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:goedit/blocs/main.dart';
 import 'package:goedit/models/chat.model.dart';
 import 'package:goedit/models/message.dart';
@@ -15,6 +16,11 @@ class ChatBloc {
 
   init() {
     _chatsController = BehaviorSubject<List<Chat>>();
+
+    // global.io.emit(`new_message_${user}_${_id}`);
+    // listen to on new message
+    mainBloc.socket.on(
+        'new_message_${mainBloc.userProfileObject.sId}', (data) => getChats());
   }
 
   getChats() async {
@@ -66,6 +72,8 @@ class ChatBloc {
 
   dispose() {
     _chatsController.close();
+    // unbind all socket listeners
+    mainBloc.socket.off('new_message_${mainBloc.userProfileObject.sId}');
   }
 }
 
@@ -74,13 +82,20 @@ final chatBloc = new ChatBloc();
 class MessagesBloc {
   User _user;
   User currentUser = mainBloc.userProfileObject;
+  ScrollController _scrollController;
   BehaviorSubject<List<ChatMessage>> _messagesController;
 
   Stream get messages => _messagesController.stream;
 
-  init(User user) {
+  init(User user, ScrollController scrollController) {
     _user = user;
     _messagesController = BehaviorSubject<List<ChatMessage>>();
+    this._scrollController = scrollController;
+
+    // listen to on new message
+    mainBloc.socket.on(
+        'new_message_${mainBloc.userProfileObject.sId}_${_user.sId}',
+        (data) => getAllMessages());
   }
 
   createMessage(ChatMessage message) async {
@@ -134,6 +149,10 @@ class MessagesBloc {
         ));
       });
       _messagesController.add(messages);
+      this._scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: Duration(milliseconds: 100),
+          curve: Curves.fastOutSlowIn);
     } catch (exc) {
       /// check if error was due to auth token
       if (exc is RequestException) {
@@ -153,6 +172,9 @@ class MessagesBloc {
 
   dispose() {
     _messagesController.close();
+    // unbind all socket listeners
+    mainBloc.socket
+        .off('new_message_${mainBloc.userProfileObject.sId}_${_user.sId}');
   }
 }
 

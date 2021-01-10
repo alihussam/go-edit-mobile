@@ -9,18 +9,17 @@ class Name {
   Name({this.firstName, this.middleName, this.lastName});
 
   String get unifiedName {
-    String name = '';
-    if (this.firstName != null) name += this.firstName + ' ';
-    if (this.middleName != null) name += this.middleName + ' ';
-    if (this.lastName != null) name += this.lastName + ' ';
+    String name =
+        '${this.firstName ?? ''} ${this.middleName ?? ''} ${this.lastName ?? ''}';
     return name;
   }
 
   Name.fromJson(Map<String, dynamic> json) {
-    print('[NameModel] fromJson');
-    firstName = json['firstName'];
-    middleName = json['middleName'];
-    lastName = json['lastName'];
+    print('[NameModel] fromJson =>  $json');
+    firstName = json['firstName'] ?? '';
+    middleName = json['middleName'] ?? '';
+    lastName = json['lastName'] ?? '';
+    print('[NameModel] fromJson END');
   }
 
   Map<String, dynamic> toJson() {

@@ -41,14 +41,17 @@ class User {
       this.ratings});
 
   String get unifiedName {
-    String name = '';
-    if (this.name.firstName != null) name += this.name.firstName + ' ';
-    if (this.name.middleName != null) name += this.name.middleName + ' ';
-    if (this.name.lastName != null) name += this.name.lastName + ' ';
+    print('Here in unified');
+    if (this.name == null) {
+      return '';
+    }
+    String name = this.name.unifiedName;
+    print('End of unified');
     return name;
   }
 
   String get shortName {
+    print('Here');
     String name = '';
     if (this.name.firstName != null) name += this.name.firstName + ' ';
     if (this.name.lastName != null)
@@ -57,9 +60,9 @@ class User {
   }
 
   User.fromJson(Map<String, dynamic> json) {
-    print('[UserModel] fromJson');
+    print('[UserModel] fromJson $json');
     sId = json['_id'];
-    name = json['name'] != null ? new Name.fromJson(json['name']) : null;
+    name = json['name'] != null ? new Name.fromJson(json['name']) : '';
     email = json['email'];
     password = json['password'];
     isEmailVerified = json['isEmailVerified'];
@@ -94,10 +97,10 @@ class User {
     if (this.name != null) data['name'] = this.name.toJson();
     if (this.email != null) data['email'] = this.email;
     if (this.password != null) data['password'] = this.password;
-    if (this.isEmailVerified != null)
-      data['isEmailVerified'] = this.isEmailVerified;
+    // if (this.isEmailVerified != null)
+    //   data['isEmailVerified'] = this.isEmailVerified;
     if (this.role != null) data['role'] = this.role;
-    if (this.imageUrl != null) data['imageUrl'] = this.imageUrl;
+    // if (this.imageUrl != null) data['imageUrl'] = this.imageUrl;
     if (this.isDisabled != null) data['isDisabled'] = this.isDisabled;
     if (this.freelancerProfile != null)
       data['freenlancerProfile'] = this.freelancerProfile.toJson();

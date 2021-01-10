@@ -15,6 +15,7 @@ class Job {
   List<Bid> bids;
   Rating employerRating;
   Rating freelancerRating;
+  User freelancer;
 
   Job(
       {this.sId,
@@ -94,6 +95,11 @@ class Job {
         : [];
     if (!(json['user'] is String)) {
       user = json['user'] != null ? new User.fromJson(json['user']) : null;
+    }
+    if (!(json['freelancer'] is String)) {
+      freelancer = json['freelancer'] != null
+          ? new User.fromJson(json['freelancer'])
+          : null;
     }
   }
 

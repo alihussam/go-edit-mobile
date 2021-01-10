@@ -89,6 +89,23 @@ class JobProv {
   }
 
   /// get All Jobs provider
+  static Future<Map> getSingleJob(String accessToken, String jobId) async {
+    try {
+      print('GetALll single params');
+      var data = await RequestClient.get('jobs/getSingleJob/$jobId',
+          headers: {'authorization': accessToken});
+
+      return {
+        'job': Job.fromJson(data['data']),
+      };
+    } catch (exc) {
+      print('exc here in get all jobs');
+      print(exc);
+      throw exc;
+    }
+  }
+
+  /// get All Jobs provider
   static Future<Map> getAll(
       String accessToken, Map<String, dynamic> queryParams) async {
     try {

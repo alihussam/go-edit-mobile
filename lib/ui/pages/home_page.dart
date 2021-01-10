@@ -20,7 +20,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   void initState() {
-    homeBloc.init();
+    // homeBloc.init();
     homeBloc.getAllAssets();
     homeBloc.getAllUsers();
     homeBloc.getAllJobs();
@@ -59,7 +59,7 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Flexible(
                     child: Text(
-                      user.shortName,
+                      user.shortName ?? '',
                       overflow: TextOverflow.ellipsis,
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold),

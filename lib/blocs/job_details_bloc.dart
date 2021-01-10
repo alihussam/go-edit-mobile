@@ -16,25 +16,25 @@ class JobDetailsBloc {
   User _freelancer;
   BehaviorSubject<Job> _currentJobController;
   BehaviorSubject<bool> _isBidCreatingController;
-  // BehaviorSubject<Bid> _newBidController;
-  // BehaviorSubject<Job> _accpetBidActionController;
   BehaviorSubject<bool> _isTakingActionOnBid;
 
   Stream get currentJob => _currentJobController.stream;
   Stream get isCreatingBid => _isBidCreatingController.stream;
   Stream get isTakingAction => _isTakingActionOnBid.stream;
-  // Stream get bid => _newBidController.stream;
-  // Stream get acceptBidAction => _accpetBidActionController.stream;
 
   init(GlobalKey<ScaffoldState> _key, Job job) {
     this._key = _key;
     this._job = job;
     _currentJobController = new BehaviorSubject<Job>();
-
-    // add current job
-    _currentJobController.sink.add(_job);
     _isBidCreatingController = BehaviorSubject<bool>();
     _isTakingActionOnBid = BehaviorSubject<bool>();
+
+    // listen to job update and resync changes
+    mainBloc.socket
+        .on('job_update_${_job.sId}', (data) => getCurrentJob(_job.sId));
+
+    // finally get current job
+    getCurrentJob(_job.sId);
   }
 
   bool isMyBidPlaced(Job job) {
@@ -49,8 +49,9 @@ class JobDetailsBloc {
     _currentJobController.close();
     _isBidCreatingController.close();
     _isTakingActionOnBid.close();
-    // _newBidController.close();
-    // _accpetBidActionController.close();
+
+    // unbind all socket listeners
+    mainBloc.socket.off('job_update_${_job.sId}');
   }
 
   /// show alert message
@@ -71,15 +72,13 @@ class JobDetailsBloc {
     } else {
       isRatingGiven = _job.employerRating != null;
     }
-    print('what');
     print(isRatingGiven);
     return isRatingGiven;
   }
 
-  User getOppositUser() {
-    if (isJobOfCurrentUser(_job)) {
-      print('Accepted');
-      Bid bid = _job.getAcceptedBid();
+  User getOppositUser(Job job) {
+    if (isJobOfCurrentUser(job)) {
+      Bid bid = job.getAcceptedBid();
       if (bid != null) {
         return bid.user;
       } else if (_freelancer != null) {
@@ -87,8 +86,7 @@ class JobDetailsBloc {
       }
       return new User();
     }
-    print('employer');
-    return _job.user;
+    return job.user;
   }
 
   Rating getRatingIProvided() {
@@ -99,11 +97,29 @@ class JobDetailsBloc {
     }
   }
 
+  getCurrentJob(String jobId) async {
+    try {
+      print('[JOB_DETAILS_BLOC]: Getting current job');
+      _isBidCreatingController.sink.add(true);
+      var data = await JobRepo.getSingleJob(jobId);
+      _currentJobController.sink.add(data['job']);
+    } catch (error) {
+      if (error is RequestException) {
+        alert(error.message);
+      } else {
+        alert(error.toString());
+      }
+    } finally {
+      _isBidCreatingController.sink.add(false);
+    }
+  }
+
   createBid(Bid bid) async {
     try {
       _isBidCreatingController.sink.add(true);
       var data = await JobRepo.bid(bid);
-      _currentJobController.sink.add(data['job']);
+      this.getCurrentJob(_job.sId);
+      // _currentJobController.sink.add(data['job']);
       // refresh previous job page
       jobPageBloc.refetchPreviousJobs();
     } catch (error) {
@@ -126,8 +142,9 @@ class JobDetailsBloc {
         'status': 'ACCEPTED',
       };
       var data = await JobRepo.bidAction(payload);
-      _currentJobController.sink.add(data['job']);
-      _freelancer = data['job'];
+      // _currentJobController.sink.add(data['job']);
+      // _freelancer = data['job'];
+      this.getCurrentJob(_job.sId);
       // refresh previous job page
       jobPageBloc.refetchPreviousJobs();
     } catch (error) {
@@ -151,7 +168,8 @@ class JobDetailsBloc {
         'ccCvv': ccCvv,
       };
       var data = await JobRepo.jobAction(payload);
-      _currentJobController.sink.add(data['job']);
+      // _currentJobController.sink.add(data['job']);
+      this.getCurrentJob(_job.sId);
       // refresh previous job page
       jobPageBloc.refetchPreviousJobs();
     } catch (error) {
@@ -173,7 +191,8 @@ class JobDetailsBloc {
         'rating': rating.toString(),
       };
       var data = await JobRepo.provideRating(payload);
-      _currentJobController.sink.add(data['job']);
+      // _currentJobController.sink.add(data['job']);
+      this.getCurrentJob(_job.sId);
       // refresh previous job page
       jobPageBloc.refetchPreviousJobs();
     } catch (error) {

@@ -36,7 +36,7 @@ class _ChatPageState extends State<ChatPage> {
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         subtitle: Text(
-          chat.messages.last.text,
+          chat.messages.first.text ?? '',
           overflow: TextOverflow.ellipsis,
         ),
         onTap: () {
@@ -81,9 +81,11 @@ class OneToOneChat extends StatefulWidget {
 }
 
 class _OneToOneChatState extends State<OneToOneChat> {
+  ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
-    messagesBloc.init(widget.user);
+    messagesBloc.init(widget.user, _scrollController);
     messagesBloc.getAllMessages();
     super.initState();
   }
@@ -108,6 +110,7 @@ class _OneToOneChatState extends State<OneToOneChat> {
                 avatar: messagesBloc.currentUser.imageUrl,
                 uid: messagesBloc.currentUser.sId),
             messages: snapshot.data,
+            scrollController: _scrollController,
             inputDecoration: InputDecoration(
               hintText: "Type your message here",
               border: InputBorder.none,

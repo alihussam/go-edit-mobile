@@ -15,11 +15,11 @@ class FreelancerProfile {
       this.skills});
 
   FreelancerProfile.fromJson(Map<String, dynamic> json) {
-    jobTitle = json['jobTitle'];
+    jobTitle = json['jobTitle'] ?? '';
     rating = double.parse(json['rating'].toString());
     projects = json['projects'];
     assets = json['assets'];
-    bio = json['bio'];
+    bio = json['bio'] ?? '';
     skills = json['skills'];
   }
 

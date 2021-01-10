@@ -119,7 +119,7 @@ class JobRepo {
     try {
       // add token in headers
       String accessToken = await _secureStorage.read(key: 'accessToken');
-      print('access token found in create bid repo ');
+      print('access token found in create message, job repo ');
       print(accessToken);
       var data = await JobProv.createChatMessage(accessToken, message);
       return data;
@@ -142,6 +142,26 @@ class JobRepo {
       // add token in headers
       String accessToken = await _secureStorage.read(key: 'accessToken');
       var data = await JobProv.getAll(accessToken, queryParams);
+      return data;
+    } catch (exc) {
+      if (exc is RequestException) {
+        // here we check if our error key is related to jwt
+        if (exc.errorKey == 'JWT_MISSING' ||
+            exc.errorKey == 'JWT_EXPIRED' ||
+            exc.errorKey == 'JWT_INVALID') {
+          _secureStorage.delete(key: 'accessToken');
+        }
+      }
+      throw exc;
+    }
+  }
+
+  /// get all jobs
+  static Future<Map> getSingleJob(String jobId) async {
+    try {
+      // add token in headers
+      String accessToken = await _secureStorage.read(key: 'accessToken');
+      var data = await JobProv.getSingleJob(accessToken, jobId);
       return data;
     } catch (exc) {
       if (exc is RequestException) {

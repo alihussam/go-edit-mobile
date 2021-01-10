@@ -20,10 +20,10 @@ class RequestClient {
         newheaders.addAll(headers);
       }
       Uri finalUrl = Uri(
-        scheme: 'http',
-        // scheme: 'https',
         // host: 'goedit.herokuapp.com',
-        host: '192.168.2.2',
+        // scheme: 'https',
+        host: '192.168.1.107',
+        scheme: 'http',
         port: 4041,
         path: 'api/$url',
         queryParameters: queryParams,
@@ -62,13 +62,13 @@ class RequestClient {
       if (headers != null) {
         newheaders.addAll(headers);
       }
-// https://goedit.herokuapp.com
-      var res = await http.post('http://192.168.2.2:4041/api/' + url,
+      var res = await http.post('http://192.168.1.107:4041/api/' + url,
+          // var res = await http.post('https://goedit.herokuapp.com/api/' + url,
           headers: newheaders,
           body: jsonEncodedBody != null ? jsonEncodedBody : null);
-      print('response from post success');
       // check if any error occured
       if (res.statusCode != 200) {
+        print(json.decode(res.body));
         throw new RequestException(json.decode(res.body)['errorKey'],
             json.decode(res.body)['message']);
       }
@@ -92,7 +92,9 @@ class RequestClient {
       List<File> files}) async {
     try {
       var req = http.MultipartRequest(
-          'POST', Uri.parse('http://192.168.2.2:4041/api/${url}'));
+          // 'POST', Uri.parse('https://goedit.herokuapp.com/api/${url}'));
+          'POST',
+          Uri.parse('http://192.168.1.107:4041/api/${url}'));
 
       if (headers != null) {
         req.headers.addAll(headers);

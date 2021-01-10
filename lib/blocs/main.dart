@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:io';
-
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -13,6 +13,13 @@ class MainBloc {
   User user;
   FlutterSecureStorage _secureStorage = FlutterSecureStorage();
   GlobalKey<ScaffoldState> _key;
+
+  // configure socket io
+  IO.Socket socket = IO.io('http://192.168.1.107:4041', <String, dynamic>{
+    'transports': ['websocket'],
+    'autoConnect': false,
+  });
+
   // possible values for auth are HOME, ONBOARDING, LOGIN
   BehaviorSubject<String> _authController = BehaviorSubject<String>();
   BehaviorSubject<User> _userProfileController = BehaviorSubject<User>();
@@ -21,9 +28,13 @@ class MainBloc {
   Stream<String> get auth => _authController.stream;
 
   User get userProfileObject => user;
+  IO.Socket get socketClient => socket;
 
   /// init main bloc
-  init(GlobalKey<ScaffoldState> key) => _key = key;
+  init(GlobalKey<ScaffoldState> key) {
+    _key = key;
+    this.socket.connect();
+  }
 
   /// get initial screen
   getInitialScreen() async {
@@ -91,6 +102,7 @@ class MainBloc {
   dispose() {
     _authController.close();
     _userProfileController.close();
+    socket.dispose();
   }
 }
 

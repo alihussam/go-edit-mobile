@@ -65,10 +65,10 @@ class _MyAssetsPageState extends State<MyAssetsPage> {
               _formController.showToast('Cover image is required');
               return;
             }
-            if (_asset.resourceFile == null) {
-              _formController.showToast('Resource file is required');
-              return;
-            }
+            // if (_asset.resourceFile == null) {
+            //   _formController.showToast('Resource file is required');
+            //   return;
+            // }
             myAssetsPageBloc.createAsset(_asset);
           }
         },

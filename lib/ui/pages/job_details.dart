@@ -48,6 +48,10 @@ class _JobDetailsState extends State<JobDetails> with FieldValidators {
 
   @override
   Widget build(BuildContext context) {
+    jobDetailsBloc.currentJob.listen((event) {
+      setState(() {});
+    });
+
     /// build job header
     Widget _buildHeader(Job _job) {
       return Container(
@@ -388,7 +392,7 @@ class _JobDetailsState extends State<JobDetails> with FieldValidators {
     }
 
     Widget _buildAuthorJobControls(Job job) {
-      User oppositUser = jobDetailsBloc.getOppositUser();
+      User oppositUser = jobDetailsBloc.getOppositUser(job);
       return Card(
         child: Container(
           padding: EdgeInsets.all(20),
@@ -453,7 +457,7 @@ class _JobDetailsState extends State<JobDetails> with FieldValidators {
     }
 
     Widget _buildFreelanceJobControls(Job job) {
-      User oppositUser = jobDetailsBloc.getOppositUser();
+      User oppositUser = jobDetailsBloc.getOppositUser(job);
       return Card(
         child: Container(
           padding: EdgeInsets.all(20),
@@ -489,7 +493,12 @@ class _JobDetailsState extends State<JobDetails> with FieldValidators {
                             FlatButton(
                               child: Text('Message',
                                   style: TextStyle(color: Colors.white)),
-                              onPressed: () {},
+                              onPressed: () {
+                                GlobalNavigation.key.currentState.push(
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            OneToOneChat(user: job.user)));
+                              },
                               color: Colors.blue,
                             )
                           ]
