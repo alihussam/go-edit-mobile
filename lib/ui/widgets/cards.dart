@@ -182,7 +182,7 @@ Widget buildUserTileCard(User user, Function onPress) {
     child: InkWell(
       onTap: onPress,
       child: Container(
-        height: 150,
+        height: 130,
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
           gradient: LinearGradient(

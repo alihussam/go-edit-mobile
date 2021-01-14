@@ -102,7 +102,60 @@ class _JobDetailsState extends State<JobDetails> with FieldValidators {
                   ],
                 ),
               ),
-            )
+            ),
+            SizedBox(height: 10),
+            Card(
+              child: Container(
+                padding: EdgeInsets.all(10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text('Employer Details:',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    SizedBox(height: 10),
+                    Row(
+                      children: <Widget>[
+                        buildRoundedCornerImage(imageUrl: _job.user.imageUrl),
+                        SizedBox(width: 10),
+                        Column(
+                          children: [
+                            Text(
+                              _job.user.unifiedName,
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(height: 10),
+                            Row(
+                              children: [
+                                RatingBar.builder(
+                                  initialRating:
+                                      _job.user.employerProfile.rating,
+                                  minRating: 0,
+                                  direction: Axis.horizontal,
+                                  allowHalfRating: false,
+                                  itemCount: 5,
+                                  itemPadding:
+                                      EdgeInsets.symmetric(horizontal: 4.0),
+                                  itemSize: 14,
+                                  itemBuilder: (context, _) => Icon(
+                                    Icons.star,
+                                    color: Colors.amber,
+                                  ),
+                                  ignoreGestures: true,
+                                  onRatingUpdate: null,
+                                ),
+                                SizedBox(width: 10),
+                                Text(
+                                    '(${_job.user.employerProfile.ratingCount})'),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       );
@@ -189,32 +242,40 @@ class _JobDetailsState extends State<JobDetails> with FieldValidators {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // place bid heading
             Text(
-              'Bid Sumbitted',
-              style: TextStyle(fontSize: 18),
+              'Bid Details',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             SizedBox(
               height: 10,
             ),
-            Center(
-              child: Column(
-                children: [
-                  Text(
-                    'Bid status',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                    bid.status.toUpperCase(),
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  Divider(),
-                ],
-              ),
-            )
+            Text(bid.description),
+            SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Proposed budget: ',
+                  style: TextStyle(fontWeight: FontWeight.w500),
+                ),
+                SizedBox(width: 5),
+                Text(
+                  bid.currency + ' ' + bid.budget.toString(),
+                ),
+              ],
+            ),
+            SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Bid Status: ',
+                  style: TextStyle(fontWeight: FontWeight.w500),
+                ),
+                SizedBox(width: 5),
+                Text(bid.status.toUpperCase()),
+              ],
+            ),
           ],
         ),
       );
@@ -425,16 +486,36 @@ class _JobDetailsState extends State<JobDetails> with FieldValidators {
                     // complete job or show that its already completed
                     ...(job.status != 'COMPLETED'
                         ? [
-                            FlatButton(
-                                onPressed: () {
-                                  // open a payment modal
-                                  _buildPaymentModal();
-                                },
-                                color: Colors.green,
-                                child: Text(
-                                  'Complete Job',
-                                  style: TextStyle(color: Colors.white),
-                                ))
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                FlatButton(
+                                    onPressed: () {},
+                                    child: FlatButton(
+                                      child: Text('Message',
+                                          style:
+                                              TextStyle(color: Colors.white)),
+                                      onPressed: () {
+                                        GlobalNavigation.key.currentState.push(
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    OneToOneChat(
+                                                        user: job.freelancer)));
+                                      },
+                                      color: Colors.blue,
+                                    )),
+                                FlatButton(
+                                    onPressed: () {
+                                      // open a payment modal
+                                      _buildPaymentModal();
+                                    },
+                                    color: Colors.green,
+                                    child: Text(
+                                      'Complete Job',
+                                      style: TextStyle(color: Colors.white),
+                                    ))
+                              ],
+                            ),
                           ]
                         : [
                             Column(

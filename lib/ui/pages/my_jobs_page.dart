@@ -92,7 +92,7 @@ class _MyJobsPageState extends State<MyJobsPage> {
                 if (snapshot.hasData) {
                   if (snapshot.data.length == 0) {
                     return Center(
-                      child: Text('No job found'),
+                      child: Text('You have not created any job yet'),
                     );
                   }
                   return ListView.builder(

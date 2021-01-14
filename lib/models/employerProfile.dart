@@ -1,10 +1,12 @@
 class EmployerProfile {
   double rating;
+  int ratingCount;
   int projectsCompleted;
   int assetsBought;
 
   EmployerProfile({
     this.rating,
+    this.ratingCount,
     this.projectsCompleted,
     this.assetsBought,
   });
@@ -12,6 +14,7 @@ class EmployerProfile {
   EmployerProfile.fromJson(Map<String, dynamic> json) {
     rating = double.parse(json['rating'].toString());
     projectsCompleted = json['projectsCompleted'];
+    ratingCount = json['ratingCount'] ?? 0;
     assetsBought = json['assetsBought'];
   }
 

@@ -41,12 +41,10 @@ class User {
       this.ratings});
 
   String get unifiedName {
-    print('Here in unified');
     if (this.name == null) {
       return '';
     }
     String name = this.name.unifiedName;
-    print('End of unified');
     return name;
   }
 
