@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:goedit/blocs/main.dart';
 import 'package:goedit/models/user.dart';
 import 'package:goedit/repositories/auth.dart';
@@ -26,7 +28,9 @@ class LoginBloc {
       var data = await AuthRepo.login(email, password);
       mainBloc.authenticated(data['profile']);
       _isAuthenticatingController.sink.add(false);
-    } catch (error) {
+    } catch (error, stacktrace) {
+      var completer = Completer();
+      completer.completeError(error, stacktrace);
       if (error is RequestException) {
         alert(error.message);
       } else {
@@ -42,7 +46,9 @@ class LoginBloc {
       var data = await AuthRepo.signup(user);
       mainBloc.authenticated(data['profile']);
       _isAuthenticatingController.sink.add(false);
-    } catch (error) {
+    } catch (error, stacktrace) {
+      var completer = Completer();
+      completer.completeError(error, stacktrace);
       if (error is RequestException) {
         alert(error.message);
       } else {

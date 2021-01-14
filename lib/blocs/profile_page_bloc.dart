@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:goedit/blocs/main.dart';
 import 'package:goedit/models/user.dart';
 import 'package:goedit/repositories/auth.dart';
@@ -41,6 +43,10 @@ class ProfilePageBloc {
   /// show alert message
   alert(String message) => mainBloc.alert(message);
 
+  isCurrentUser(String userId) {
+    return userId == mainBloc.userProfileObject.sId;
+  }
+
   /// close all the opened streams
   dispose() {
     _activeStatCardController.close();
@@ -56,7 +62,9 @@ class ProfilePageBloc {
       var data = await UserRepo.updateProfilePicture(user);
       mainBloc.updateUserProfile(data['profile']);
       _userProfileController.sink.add(data['profile']);
-    } catch (error) {
+    } catch (error, stacktrace) {
+      var completer = Completer();
+      completer.completeError(error, stacktrace);
       if (error is RequestException) {
         alert(error.message);
       } else {
@@ -72,7 +80,9 @@ class ProfilePageBloc {
       var data = await AuthRepo.getProfile();
       mainBloc.updateUserProfile(data['profile']);
       _userProfileController.sink.add(data['profile']);
-    } catch (error) {
+    } catch (error, stacktrace) {
+      var completer = Completer();
+      completer.completeError(error, stacktrace);
       if (error is RequestException) {
         alert(error.message);
       } else {
@@ -90,7 +100,9 @@ class ProfilePageBloc {
       _userProfileController.sink.add(data['profile']);
       _isUpdatingProfileController.sink.add(false);
       _isUpdateModeOnController.sink.add(false);
-    } catch (error) {
+    } catch (error, stacktrace) {
+      var completer = Completer();
+      completer.completeError(error, stacktrace);
       if (error is RequestException) {
         alert(error.message);
       } else {

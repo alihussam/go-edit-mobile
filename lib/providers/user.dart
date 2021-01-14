@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:goedit/models/metaData.dart';
@@ -83,7 +84,7 @@ class UserProv {
     try {
       var data = await RequestClient.get('user/getAll',
           headers: {'authorization': accessToken}, queryParams: queryParams);
-      MetaData metaData = MetaData.fromJson(data['data']['metaData']);
+      // MetaData metaData = MetaData.fromJson(data['data']['metaData']);
       List<User> entries = [];
       for (var entry in data['data']['entries']) {
         entries.add(User.fromJson(entry));
@@ -94,12 +95,14 @@ class UserProv {
 
       return {
         'entries': entries,
-        'metaData': metaData,
+        // 'metaData': metaData,
       };
-    } catch (exc) {
-      print('exc here in get all assets');
-      print(exc);
-      throw exc;
+    } catch (error, stacktrace) {
+      var completer = Completer();
+      completer.completeError(error, stacktrace);
+      print('exc here in get all users');
+      print(error);
+      throw error;
     }
   }
 }

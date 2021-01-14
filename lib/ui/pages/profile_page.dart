@@ -300,7 +300,8 @@ class _ProfilePageState extends State<ProfilePage> with FieldValidators {
       return Stack(
         children: [
           // update button
-          ...(widget.user == null
+          ...(widget.user == null ||
+                  profilePageBloc.isCurrentUser(widget.user.sId)
               ? [_createUpdateProfileButton()]
               : [
                   Row(
@@ -325,6 +326,8 @@ class _ProfilePageState extends State<ProfilePage> with FieldValidators {
               children: [
                 ProfileViewImagePicker(
                   imageUrl: user.imageUrl,
+                  isViewOnly: widget.user != null &&
+                      !profilePageBloc.isCurrentUser(widget.user.sId),
                   onImageSelect: (File image) {
                     updatedProfile.profileImage = image;
                     profilePageBloc.updateProfilePicture(updatedProfile);

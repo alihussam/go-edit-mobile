@@ -21,9 +21,9 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     // homeBloc.init();
-    homeBloc.getAllAssets();
-    homeBloc.getAllUsers();
+    homeBloc.getTopRatedUsers();
     homeBloc.getAllJobs();
+    homeBloc.getAllAssets();
     super.initState();
   }
 
@@ -108,7 +108,7 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _buildHeaderOptions('Designers'),
+            _buildHeaderOptions('Top Designers'),
             Container(
               margin: EdgeInsets.only(top: 20),
               height: 215,

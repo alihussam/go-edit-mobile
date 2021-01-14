@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:goedit/models/asset.dart';
@@ -25,7 +26,9 @@ class AssetProv {
           headers: headers, payload: body, files: files);
 
       return {'asset': Asset.fromJson(data['data'])};
-    } catch (exc) {
+    } catch (exc, stacktrace) {
+      var completer = Completer();
+      completer.completeError(exc, stacktrace);
       print('exc here in create asset');
       print(exc);
       throw exc;

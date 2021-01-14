@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:goedit/blocs/job_page_bloc.dart';
@@ -103,7 +105,9 @@ class JobDetailsBloc {
       _isBidCreatingController.sink.add(true);
       var data = await JobRepo.getSingleJob(jobId);
       _currentJobController.sink.add(data['job']);
-    } catch (error) {
+    } catch (error, stacktrace) {
+      var completer = Completer();
+      completer.completeError(error, stacktrace);
       if (error is RequestException) {
         alert(error.message);
       } else {
@@ -122,7 +126,9 @@ class JobDetailsBloc {
       // _currentJobController.sink.add(data['job']);
       // refresh previous job page
       jobPageBloc.refetchPreviousJobs();
-    } catch (error) {
+    } catch (error, stacktrace) {
+      var completer = Completer();
+      completer.completeError(error, stacktrace);
       if (error is RequestException) {
         alert(error.message);
       } else {
@@ -147,7 +153,9 @@ class JobDetailsBloc {
       this.getCurrentJob(_job.sId);
       // refresh previous job page
       jobPageBloc.refetchPreviousJobs();
-    } catch (error) {
+    } catch (error, stacktrace) {
+      var completer = Completer();
+      completer.completeError(error, stacktrace);
       if (error is RequestException) {
         alert(error.message);
       } else {
@@ -172,7 +180,9 @@ class JobDetailsBloc {
       this.getCurrentJob(_job.sId);
       // refresh previous job page
       jobPageBloc.refetchPreviousJobs();
-    } catch (error) {
+    } catch (error, stacktrace) {
+      var completer = Completer();
+      completer.completeError(error, stacktrace);
       if (error is RequestException) {
         alert(error.message);
       } else {
@@ -195,7 +205,9 @@ class JobDetailsBloc {
       this.getCurrentJob(_job.sId);
       // refresh previous job page
       jobPageBloc.refetchPreviousJobs();
-    } catch (error) {
+    } catch (error, stacktrace) {
+      var completer = Completer();
+      completer.completeError(error, stacktrace);
       if (error is RequestException) {
         alert(error.message);
       } else {

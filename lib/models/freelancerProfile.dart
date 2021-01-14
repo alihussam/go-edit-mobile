@@ -1,6 +1,7 @@
 class FreelancerProfile {
   String jobTitle;
   double rating;
+  int ratingCount;
   int projects;
   int assets;
   String bio;
@@ -10,6 +11,7 @@ class FreelancerProfile {
       {this.jobTitle,
       this.assets,
       this.bio,
+      this.ratingCount,
       this.projects,
       this.rating,
       this.skills});
@@ -17,6 +19,7 @@ class FreelancerProfile {
   FreelancerProfile.fromJson(Map<String, dynamic> json) {
     jobTitle = json['jobTitle'] ?? '';
     rating = double.parse(json['rating'].toString());
+    ratingCount = json['ratingCount'] ?? 0;
     projects = json['projects'];
     assets = json['assets'];
     bio = json['bio'] ?? '';

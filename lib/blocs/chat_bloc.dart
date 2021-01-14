@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dash_chat/dash_chat.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:goedit/blocs/main.dart';
@@ -41,7 +43,10 @@ class ChatBloc {
       //   ));
       // });
       _chatsController.sink.add(chats);
-    } catch (exc) {
+    } catch (exc, stacktrace) {
+      var completer = Completer();
+      completer.completeError(exc, stacktrace);
+
       /// check if error was due to auth token
       if (exc is RequestException) {
         if (exc.errorKey == 'JWT_MISSING' ||
@@ -114,7 +119,10 @@ class MessagesBloc {
               avatar: temp.sender.imageUrl,
               uid: temp.sender.sId)));
       _messagesController.add(messages);
-    } catch (exc) {
+    } catch (exc, stacktrace) {
+      var completer = Completer();
+      completer.completeError(exc, stacktrace);
+
       /// check if error was due to auth token
       if (exc is RequestException) {
         if (exc.errorKey == 'JWT_MISSING' ||
@@ -153,7 +161,10 @@ class MessagesBloc {
           _scrollController.position.maxScrollExtent,
           duration: Duration(milliseconds: 100),
           curve: Curves.fastOutSlowIn);
-    } catch (exc) {
+    } catch (exc, stacktrace) {
+      var completer = Completer();
+      completer.completeError(exc, stacktrace);
+
       /// check if error was due to auth token
       if (exc is RequestException) {
         if (exc.errorKey == 'JWT_MISSING' ||

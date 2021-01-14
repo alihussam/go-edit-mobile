@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:goedit/blocs/main.dart';
 import 'package:goedit/models/asset.dart';
 import 'package:goedit/models/job.dart';
@@ -65,7 +67,9 @@ class HomeBloc {
       _assetsController.add(_finalList);
       _assetMetaDataController.add(res['metaData']);
       _isLoadingAssetsController.add(false);
-    } catch (exc) {
+    } catch (exc, stacktrace) {
+      var completer = Completer();
+      completer.completeError(exc, stacktrace);
       _isLoadingAssetsController.add(false);
 
       /// check if error was due to auth token
@@ -102,7 +106,9 @@ class HomeBloc {
       _jobsController.add(_finalList);
       // _assetMetaDataController.add(res['metaData']);
       _isLoadingAssetsController.add(false);
-    } catch (exc) {
+    } catch (exc, stacktrace) {
+      var completer = Completer();
+      completer.completeError(exc, stacktrace);
       _isLoadingAssetsController.add(false);
 
       /// check if error was due to auth token
@@ -119,20 +125,28 @@ class HomeBloc {
     }
   }
 
-  getAllUsers({String searchString, int limit, int page}) async {
+  getTopRatedUsers({String searchString, int limit, int page}) async {
     _isLoadingUsersController.add(true);
     try {
       // construct query first
-      Map<String, dynamic> queryParams = {};
-      if (searchString != null) queryParams['searchString'] = searchString;
-      if (limit != null) queryParams['limit'] = limit;
-      if (page != null) queryParams['page'] = page;
+      Map<String, dynamic> queryParams = {
+        'sortField': 'freenlancerProfile.rating',
+        'page': '1',
+        'limit': '10',
+      };
+
+      // if (searchString != null) queryParams['searchString'] = searchString;
+      // if (limit != null) queryParams['limit'] = limit;
+      // if (page != null) queryParams['page'] = page;
 
       // make the call
       var res = await UserRepo.getAll(queryParams);
       _usersController.add(res['entries']);
       _usersMetaDataController.add(res['metaData']);
-    } catch (exc) {
+    } catch (exc, stacktrace) {
+      var completer = Completer();
+      completer.completeError(exc, stacktrace);
+
       /// check if error was due to auth token
       if (exc is RequestException) {
         if (exc.errorKey == 'JWT_MISSING' ||

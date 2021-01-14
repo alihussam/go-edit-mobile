@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:goedit/blocs/main.dart';
 import 'package:goedit/models/job.dart';
 import 'package:goedit/models/metaData.dart';
@@ -41,19 +43,21 @@ class MyJobsPageBloc {
       _jobsController.add(res['entries']);
       _jobsMetaDataController.add(res['metaData']);
       _isLoadingJobsController.add(false);
-    } catch (exc) {
+    } catch (error, stacktrace) {
+      var completer = Completer();
+      completer.completeError(error, stacktrace);
       _isLoadingJobsController.add(false);
 
       /// check if error was due to auth token
-      if (exc is RequestException) {
-        if (exc.errorKey == 'JWT_MISSING' ||
-            exc.errorKey == 'JWT_EXPIRED' ||
-            exc.errorKey == 'JWT_INVALID') {
+      if (error is RequestException) {
+        if (error.errorKey == 'JWT_MISSING' ||
+            error.errorKey == 'JWT_EXPIRED' ||
+            error.errorKey == 'JWT_INVALID') {
           mainBloc.logout();
         }
-        alert(exc.message);
+        alert(error.message);
       } else {
-        alert(exc.toString());
+        alert(error.toString());
       }
     }
   }
@@ -63,7 +67,9 @@ class MyJobsPageBloc {
       _isCreatingJobController.sink.add(true);
       var data = await JobRepo.create(job);
       _newJobController.sink.add(data['job']);
-    } catch (error) {
+    } catch (error, stacktrace) {
+      var completer = Completer();
+      completer.completeError(error, stacktrace);
       if (error is RequestException) {
         _newJobController.sink.addError(error.message);
       } else {

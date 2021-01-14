@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:goedit/blocs/main.dart';
 import 'package:goedit/models/asset.dart';
 import 'package:goedit/models/metaData.dart';
@@ -39,7 +41,9 @@ class MyAssetsPageBloc {
       _isCreatingAssetController.sink.add(true);
       var data = await AssetRepo.create(asset);
       _newAssetController.sink.add(data['asset']);
-    } catch (error) {
+    } catch (error, stacktrace) {
+      var completer = Completer();
+      completer.completeError(error, stacktrace);
       if (error is RequestException) {
         _newAssetController.sink.addError(error.message);
       } else {
@@ -72,7 +76,9 @@ class MyAssetsPageBloc {
       _assetsController.add(_finalList);
       _assetsMetaDataController.add(res['metaData']);
       _isLoadingAssetsController.add(false);
-    } catch (exc) {
+    } catch (exc, stacktrace) {
+      var completer = Completer();
+      completer.completeError(exc, stacktrace);
       _isLoadingAssetsController.add(false);
 
       /// check if error was due to auth token

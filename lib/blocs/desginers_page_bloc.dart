@@ -1,36 +1,30 @@
 import 'dart:async';
-
 import 'package:goedit/blocs/main.dart';
-import 'package:goedit/models/job.dart';
-import 'package:goedit/models/metaData.dart';
-import 'package:goedit/repositories/job.dart';
+import 'package:goedit/models/user.dart';
+import 'package:goedit/repositories/user.dart';
 import 'package:goedit/utils/request_exception.dart';
 import 'package:rxdart/subjects.dart';
 
-class JobPageBloc {
+class DesignersPageBloc {
   BehaviorSubject<bool> _isLoadingJobsController;
-  BehaviorSubject<MetaData> _jobsMetaDataController;
-  BehaviorSubject<List<Job>> _jobsController;
+  BehaviorSubject<List<User>> _jobsController;
 
   Map<String, dynamic> lastUsedQuery = {};
 
-  Stream get jobs => _jobsController.stream;
-  Stream get jobsMetaData => _jobsMetaDataController.stream;
-  Stream get isLoadingJobs => _isLoadingJobsController.stream;
+  Stream get users => _jobsController.stream;
+  Stream get isLoadingUsers => _isLoadingJobsController.stream;
 
   init() {
-    _jobsController = BehaviorSubject<List<Job>>();
-    _jobsMetaDataController = BehaviorSubject<MetaData>();
+    _jobsController = BehaviorSubject<List<User>>();
     _isLoadingJobsController = BehaviorSubject<bool>();
   }
 
-  refetchPreviousJobs() async {
+  refetchPreviousUsers() async {
     _isLoadingJobsController.add(true);
     try {
       // make the call
-      var res = await JobRepo.getAll(lastUsedQuery);
+      var res = await UserRepo.getAll(lastUsedQuery);
       _jobsController.add(res['entries']);
-      _jobsMetaDataController.add(res['metaData']);
       _isLoadingJobsController.add(false);
     } catch (error, stacktrace) {
       var completer = Completer();
@@ -51,22 +45,26 @@ class JobPageBloc {
     }
   }
 
-  getAllJobs({String searchString, String user, int limit, int page}) async {
+  getAllUsers({String searchString, String user, int limit, int page}) async {
     _isLoadingJobsController.add(true);
     try {
       // construct query first
-      Map<String, dynamic> queryParams = {};
+      // Map<String, dynamic> queryParams = {};
+      Map<String, dynamic> queryParams = {
+        'sortField': 'freenlancerProfile.rating',
+        // 'page': '1',
+        // 'limit': '10',
+      };
       if (searchString != null) queryParams['searchString'] = searchString;
-      if (user != null) queryParams['user'] = user;
-      if (limit != null) queryParams['limit'] = limit;
-      if (page != null) queryParams['page'] = page;
+      // if (user != null) queryParams['user'] = user;
+      // if (limit != null) queryParams['limit'] = limit;
+      // if (page != null) queryParams['page'] = page;
 
       lastUsedQuery = queryParams;
 
       // make the call
-      var res = await JobRepo.getAll(queryParams);
+      var res = await UserRepo.getAll(queryParams);
       _jobsController.add(res['entries']);
-      _jobsMetaDataController.add(res['metaData']);
       _isLoadingJobsController.add(false);
     } catch (exc, stacktrace) {
       var completer = Completer();
@@ -93,9 +91,8 @@ class JobPageBloc {
   /// close all the opened streams
   dispose() {
     _jobsController.close();
-    _jobsMetaDataController.close();
     _isLoadingJobsController.close();
   }
 }
 
-final JobPageBloc jobPageBloc = JobPageBloc();
+final designersPageBloc = DesignersPageBloc();

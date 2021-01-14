@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:goedit/models/asset.dart';
 import 'package:goedit/models/job.dart';
+import 'package:goedit/models/user.dart';
 
 Widget buildRoundedCornerImage({
   String imageUrl = 'https://uifaces.co/our-content/donated/L7wQctBt.jpg',
@@ -167,6 +168,98 @@ Widget buildAssetTileCard(Asset asset, Function onPress) {
                     ),
                   ],
                 ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+Widget buildUserTileCard(User user, Function onPress) {
+  return Card(
+    child: InkWell(
+      onTap: onPress,
+      child: Container(
+        height: 150,
+        padding: EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+              colors: [Color(0xFFdadadf), Color(0xFFe9e9ec).withOpacity(0.5)]),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Container(
+              // padding: EdgeInsets.all(),
+              height: 120,
+              width: 120,
+              child: Card(
+                semanticContainer: true,
+                clipBehavior: Clip.antiAliasWithSaveLayer,
+                child: Image.network(
+                  user.imageUrl,
+                  fit: BoxFit.fill,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                elevation: 5,
+                margin: EdgeInsets.all(10),
+              ),
+            ),
+            // SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Flexible(
+                    child: Text(
+                      user.shortName ?? '',
+                      overflow: TextOverflow.ellipsis,
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  // SizedBox(
+                  //   height: 6,
+                  // ),
+                  Text(
+                    user.freelancerProfile.jobTitle != ''
+                        ? user.freelancerProfile.jobTitle
+                        : '(No Job Title)',
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  // SizedBox(
+                  //   height: 6,
+                  // ),
+                  Row(
+                    children: [
+                      RatingBar.builder(
+                        initialRating: user.freelancerProfile.rating,
+                        minRating: 0,
+                        direction: Axis.horizontal,
+                        allowHalfRating: false,
+                        itemCount: 5,
+                        itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                        itemSize: 14,
+                        itemBuilder: (context, _) => Icon(
+                          Icons.star,
+                          color: Colors.amber,
+                        ),
+                        ignoreGestures: true,
+                        onRatingUpdate: null,
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text('(${user.freelancerProfile.ratingCount})'),
+                    ],
+                  ),
+                ],
               ),
             ),
           ],

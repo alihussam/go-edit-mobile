@@ -7,8 +7,10 @@ import 'package:goedit/utils/file_helper.dart';
 class ProfileViewImagePicker extends StatefulWidget {
   final String imageUrl;
   final Function(File image) onImageSelect;
+  final bool isViewOnly;
 
-  ProfileViewImagePicker({this.imageUrl, this.onImageSelect});
+  ProfileViewImagePicker(
+      {this.imageUrl, this.onImageSelect, this.isViewOnly = false});
 
   @override
   _ProfileViewImagePickerState createState() => _ProfileViewImagePickerState();
@@ -27,6 +29,7 @@ class _ProfileViewImagePickerState extends State<ProfileViewImagePicker> {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () async {
+        if (widget.isViewOnly) return;
         File image = await FileHelper.pickImageFromGallery();
         if (image != null) {
           widget.onImageSelect(image);

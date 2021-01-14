@@ -51,7 +51,10 @@ class MainBloc {
         user = data['profile'];
         _authController.sink.add('HOME');
       }
-    } catch (exc) {
+    } catch (exc, stacktrace) {
+      var completer = Completer();
+      completer.completeError(exc, stacktrace);
+
       /// check if error was due to auth token
       if (exc is RequestException) {
         if (exc.errorKey == 'JWT_MISSING' ||
