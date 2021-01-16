@@ -24,7 +24,7 @@ class RequestClient {
       Uri finalUrl = Uri(
         // host: 'goedit.herokuapp.com',
         // scheme: 'https',
-        host: '192.168.1.109',
+        host: '192.168.1.101',
         scheme: 'http',
         port: 4041,
         path: 'api/$url',
@@ -67,7 +67,7 @@ class RequestClient {
       if (headers != null) {
         newheaders.addAll(headers);
       }
-      var res = await http.post('http://192.168.1.109:4041/api/' + url,
+      var res = await http.post('http://192.168.1.101:4041/api/' + url,
           // var res = await http.post('https://goedit.herokuapp.com/api/' + url,
           headers: newheaders,
           body: jsonEncodedBody != null ? jsonEncodedBody : null);
@@ -99,7 +99,7 @@ class RequestClient {
       var req = http.MultipartRequest(
           // 'POST', Uri.parse('https://goedit.herokuapp.com/api/${url}'));
           'POST',
-          Uri.parse('http://192.168.1.109:4041/api/${url}'));
+          Uri.parse('http://192.168.1.101:4041/api/${url}'));
 
       if (headers != null) {
         req.headers.addAll(headers);

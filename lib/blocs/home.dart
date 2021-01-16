@@ -90,7 +90,9 @@ class HomeBloc {
     _isLoadingAssetsController.add(true);
     try {
       // construct query first
-      Map<String, dynamic> queryParams = {};
+      Map<String, dynamic> queryParams = {
+        'status': 'PENDING',
+      };
       // if (searchString != null) queryParams['searchString'] = searchString;
       // if (user != null) queryParams['user'] = user;
       // if (limit != null) queryParams['limit'] = limit;

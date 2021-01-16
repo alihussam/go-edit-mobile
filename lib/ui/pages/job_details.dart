@@ -657,7 +657,10 @@ class _JobDetailsState extends State<JobDetails> with FieldValidators {
           : _buildBiddersview();
     }
 
-    Widget _buildRatingCard(bool isRatingAlreadyProvided) {
+    // build rating for me card
+
+    // what you rated or can rate
+    Widget _buildRatingForm() {
       return Card(
         child: Container(
           padding: EdgeInsets.all(10),
@@ -665,18 +668,14 @@ class _JobDetailsState extends State<JobDetails> with FieldValidators {
             child: Column(
               children: [
                 Text(
-                  isRatingAlreadyProvided
-                      ? 'Thank you for rating'
-                      : 'Rate User',
+                  'Rate Other Party',
                   style: TextStyle(fontSize: 15),
                 ),
                 SizedBox(
                   height: 10,
                 ),
                 RatingBar.builder(
-                  initialRating: isRatingAlreadyProvided
-                      ? jobDetailsBloc.getRatingIProvided().rating
-                      : rating.rating,
+                  initialRating: rating.rating,
                   minRating: 1,
                   direction: Axis.horizontal,
                   allowHalfRating: false,
@@ -687,7 +686,6 @@ class _JobDetailsState extends State<JobDetails> with FieldValidators {
                     Icons.star,
                     color: Colors.amber,
                   ),
-                  ignoreGestures: isRatingAlreadyProvided,
                   onRatingUpdate: (value) {
                     rating.rating = value;
                   },
@@ -695,38 +693,84 @@ class _JobDetailsState extends State<JobDetails> with FieldValidators {
                 SizedBox(
                   height: 10,
                 ),
-                ...(isRatingAlreadyProvided
-                    ? [
-                        Text(jobDetailsBloc.getRatingIProvided().text != null
-                            ? jobDetailsBloc.getRatingIProvided().text
-                            : ''),
-                      ]
-                    : [
-                        buildFormField(
-                            labelText: 'Add review',
-                            onChanged: (value) => rating.text = value.trim(),
-                            initialValue: rating.text,
-                            maxLines: 2),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            FlatButton(
-                              onPressed: () => jobDetailsBloc.provideRating(
-                                  rating.text, rating.rating),
-                              child: Text('Submit',
-                                  style: TextStyle(color: Colors.white)),
-                              color: Colors.blue,
-                            )
-                          ],
-                        ),
-                      ])
+                buildFormField(
+                    labelText: 'Add review',
+                    onChanged: (value) => rating.text = value.trim(),
+                    initialValue: rating.text,
+                    maxLines: 2),
+                SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    FlatButton(
+                      onPressed: () => jobDetailsBloc.provideRating(
+                          rating.text, rating.rating),
+                      child:
+                          Text('Submit', style: TextStyle(color: Colors.white)),
+                      color: Colors.blue,
+                    )
+                  ],
+                ),
               ],
             ),
           ),
         ),
+      );
+    }
+
+    Widget _buildRatingCard(Rating rating, String cardTitle) {
+      return Card(
+        child: Container(
+          padding: EdgeInsets.all(10),
+          child: Center(
+            child: Column(
+              children: [
+                Text(cardTitle),
+                SizedBox(height: 10),
+                RatingBar.builder(
+                  initialRating: rating.rating,
+                  minRating: 1,
+                  direction: Axis.horizontal,
+                  allowHalfRating: false,
+                  itemCount: 5,
+                  itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                  itemSize: 30,
+                  itemBuilder: (context, _) => Icon(
+                    Icons.star,
+                    color: Colors.amber,
+                  ),
+                  ignoreGestures: true,
+                  onRatingUpdate: (value) {
+                    rating.rating = value;
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    Widget _buildRatingCards() {
+      // first check if opposite user has rated me
+      List<Widget> colChildren = [];
+      if (jobDetailsBloc.getRatingForCurrentUser() != null) {
+        colChildren.add(_buildRatingCard(
+            jobDetailsBloc.getRatingForCurrentUser(), 'Rating For You'));
+        // _buildRatingCard(
+        //                         jobDetailsBloc.hasUserProvidedRating()),
+      }
+      // check if current user has rated
+      if (jobDetailsBloc.hasUserProvidedRating()) {
+        colChildren.add(_buildRatingCard(
+            jobDetailsBloc.getRatingIProvided(), 'Rating You Provided'));
+      } else {
+        colChildren.add(_buildRatingForm());
+      }
+      return Column(
+        children: colChildren,
       );
     }
 
@@ -755,8 +799,7 @@ class _JobDetailsState extends State<JobDetails> with FieldValidators {
                     // only show rating when job is complete
                     ...(_job.status == 'COMPLETED'
                         ? [
-                            _buildRatingCard(
-                                jobDetailsBloc.hasUserProvidedRating()),
+                            _buildRatingCards(),
                           ]
                         : [])
                   ],

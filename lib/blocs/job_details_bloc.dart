@@ -99,6 +99,14 @@ class JobDetailsBloc {
     }
   }
 
+  Rating getRatingForCurrentUser() {
+    if (isJobOfCurrentUser(_job)) {
+      return _job.employerRating;
+    } else {
+      return _job.freelancerRating;
+    }
+  }
+
   getCurrentJob(String jobId) async {
     try {
       print('[JOB_DETAILS_BLOC]: Getting current job');

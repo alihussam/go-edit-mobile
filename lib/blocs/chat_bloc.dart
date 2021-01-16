@@ -143,6 +143,7 @@ class MessagesBloc {
     try {
       // construct query first
       Map<String, dynamic> queryParams = {'user': _user.sId};
+      print('User ${_user.name.unifiedName}');
 
       // make the call
       var res = await JobRepo.getAllMessages(queryParams);

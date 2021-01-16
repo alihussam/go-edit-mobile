@@ -118,7 +118,7 @@ class _OneToOneChatState extends State<OneToOneChat> {
             onSend: (ChatMessage message) {
               messagesBloc.createMessage(message);
             },
-            showUserAvatar: true,
+            showUserAvatar: false,
           );
         },
       ),
