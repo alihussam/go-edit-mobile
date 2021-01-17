@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:goedit/models/bid.dart';
 import 'package:goedit/models/job.dart';
@@ -125,7 +126,9 @@ class JobProv {
         'entries': entries,
         'metaData': metaData,
       };
-    } catch (exc) {
+    } catch (exc, stacktrace) {
+      var completer = Completer();
+      completer.completeError(exc, stacktrace);
       print('exc here in get all jobs');
       print(exc);
       throw exc;

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:goedit/blocs/home.dart';
 import 'package:goedit/ui/pages/designers_page.dart';
 import 'package:goedit/ui/pages/home_page.dart';
+import 'package:goedit/ui/pages/jobs_history_page.dart';
 import 'package:goedit/ui/pages/jobs_page.dart';
 import 'package:goedit/ui/pages/my_assets_page.dart';
 import 'package:goedit/ui/pages/my_jobs_page.dart';
@@ -54,31 +55,38 @@ class _HomeScreenState extends State<HomeScreen> {
                 GlobalNavigation.key.currentState.pop(),
               }),
       DrawerMenuOptionModel(
+          'Jobs History',
+          Icons.work_outline_outlined,
+          () => {
+                homeBloc.changeActivePage(3),
+                GlobalNavigation.key.currentState.pop(),
+              }),
+      DrawerMenuOptionModel(
           'My Jobs',
           Icons.work_outline,
           () => {
-                homeBloc.changeActivePage(3),
+                homeBloc.changeActivePage(4),
                 GlobalNavigation.key.currentState.pop(),
               }),
       DrawerMenuOptionModel(
           'My Assets',
           Icons.cloud_download,
           () => {
-                homeBloc.changeActivePage(4),
+                homeBloc.changeActivePage(5),
                 GlobalNavigation.key.currentState.pop(),
               }),
       DrawerMenuOptionModel(
           'Messages',
           Icons.message,
           () => {
-                homeBloc.changeActivePage(5),
+                homeBloc.changeActivePage(6),
                 GlobalNavigation.key.currentState.pop(),
               }),
       DrawerMenuOptionModel(
           'My Profile',
           Icons.account_circle,
           () => {
-                homeBloc.changeActivePage(6),
+                homeBloc.changeActivePage(7),
                 GlobalNavigation.key.currentState.pop(),
               }),
     ];
@@ -87,6 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
       HomePage(),
       DesignersPage(),
       JobPage(),
+      JobHistoryPage(),
       MyJobsPage(),
       MyAssetsPage(),
       ChatPage(),

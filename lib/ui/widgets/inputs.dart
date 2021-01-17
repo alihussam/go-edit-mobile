@@ -88,9 +88,12 @@ Widget buildSearchBar({
 class SingleImageInput extends StatefulWidget {
   final void Function(File) onImageSelect;
   final String placeHolderText;
+  final bool isShowPlaceHolderImage;
 
   SingleImageInput(
-      {this.onImageSelect, this.placeHolderText = 'Click to add image'});
+      {this.onImageSelect,
+      this.placeHolderText = 'Click to add image',
+      this.isShowPlaceHolderImage = true});
 
   @override
   _SingleImageInputState createState() => _SingleImageInputState();
@@ -146,12 +149,13 @@ class _SingleImageInputState extends State<SingleImageInput> {
             }
             return Container(
               height: 150,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image: AssetImage('assets/images/placeholder.jpg'),
-                ),
-              ),
+              decoration: !widget.isShowPlaceHolderImage
+                  ? BoxDecoration()
+                  : BoxDecoration(
+                      image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image: AssetImage('assets/images/placeholder.jpg')),
+                    ),
               child: Center(
                 child: Text(
                   widget.placeHolderText,

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:goedit/blocs/asset_details_bloc.dart';
 import 'package:goedit/models/asset.dart';
+import 'package:goedit/ui/widgets/inputs.dart';
+import 'package:goedit/ui/widgets/loading.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AssetDetailsPage extends StatefulWidget {
   final Asset asset;
@@ -11,6 +15,20 @@ class AssetDetailsPage extends StatefulWidget {
 }
 
 class _AssetDetailsPageState extends State<AssetDetailsPage> {
+  GlobalKey<ScaffoldState> _key = new GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    assetDetailsBloc.init(_key, widget.asset);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    assetDetailsBloc.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget _buildHeaderImage(Asset asset) {
@@ -67,6 +85,33 @@ class _AssetDetailsPageState extends State<AssetDetailsPage> {
               height: 20,
             ),
             Text(asset.description),
+            SizedBox(
+              height: 20,
+            ),
+            // check if asset exist if not show add asset
+            ...(asset.resourceUrl != null
+                ? [
+                    FlatButton(
+                        onPressed: () async {
+                          if (await canLaunch(asset.resourceUrl)) {
+                            launch(asset.resourceUrl);
+                          }
+                        },
+                        color: Theme.of(context).primaryColor,
+                        child: Text(
+                          'Download Asset',
+                          style: TextStyle(color: Colors.white),
+                        ))
+                  ]
+                : [
+                    SingleImageInput(
+                      onImageSelect: (file) {
+                        assetDetailsBloc.updateResource(file);
+                      },
+                      isShowPlaceHolderImage: false,
+                      placeHolderText: '+ Add asset resource',
+                    ),
+                  ]),
           ],
         ),
       );
@@ -74,14 +119,26 @@ class _AssetDetailsPageState extends State<AssetDetailsPage> {
 
     return SafeArea(
         child: Scaffold(
+      key: _key,
       body: SingleChildScrollView(
         child: Container(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _buildHeaderImage(widget.asset),
-              _buildBody(widget.asset),
-            ],
+          child: StreamBuilder(
+            stream: assetDetailsBloc.currentAsset,
+            builder: (context, snapshot) {
+              if (!snapshot.hasData || snapshot.hasError) {
+                return Center(
+                  child: LoadSpinner(),
+                );
+              } else {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _buildHeaderImage(snapshot.data),
+                    _buildBody(snapshot.data),
+                  ],
+                );
+              }
+            },
           ),
         ),
       ),

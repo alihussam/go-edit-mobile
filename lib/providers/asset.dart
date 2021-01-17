@@ -60,4 +60,42 @@ class AssetProv {
       throw exc;
     }
   }
+
+  /// get All asset provider
+  static Future<Map> getSingleAsset(String accessToken, String assetId) async {
+    try {
+      var data = await RequestClient.get('asset/getSingleAsset/${assetId}',
+          headers: {'authorization': accessToken});
+
+      return {
+        'asset': Asset.fromJson(data['data']),
+      };
+    } catch (exc) {
+      print('exc here in get all assets');
+      print(exc);
+      throw exc;
+    }
+  }
+
+  /// Update Profile Picture
+  static Future<Map> updateResource(
+      String accessToken, String assetId, File file) async {
+    try {
+      Map<String, String> headers = {'authorization': accessToken};
+      print('Sending off');
+      print(assetId);
+
+      var data = await RequestClient.postMultiPart('asset/createResource',
+          headers: headers,
+          files: [file],
+          payload: {'assetId': assetId.toString()});
+
+      return {'asset': Asset.fromJson(data['data'])};
+    } catch (exc) {
+      print('exc here in update profile picture provider');
+      print(exc.toString());
+      if (exc.message != null) print(exc.message);
+      throw exc;
+    }
+  }
 }

@@ -753,7 +753,10 @@ class _JobDetailsState extends State<JobDetails> with FieldValidators {
       );
     }
 
-    Widget _buildRatingCards() {
+    Widget _buildRatingCards(Job _job) {
+      if (_job.status == 'COMPLETED') {
+        return Container();
+      }
       // first check if opposite user has rated me
       List<Widget> colChildren = [];
       if (jobDetailsBloc.getRatingForCurrentUser() != null) {
@@ -797,11 +800,7 @@ class _JobDetailsState extends State<JobDetails> with FieldValidators {
                     _buildHeader(_job),
                     _renderViewBasedOnUser(_job),
                     // only show rating when job is complete
-                    ...(_job.status == 'COMPLETED'
-                        ? [
-                            _buildRatingCards(),
-                          ]
-                        : [])
+                    _buildRatingCards(_job),
                   ],
                 );
               },

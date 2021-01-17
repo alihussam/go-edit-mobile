@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:goedit/blocs/main.dart';
 import 'package:goedit/models/asset.dart';
 import 'package:goedit/models/job.dart';
@@ -31,6 +32,9 @@ class HomeBloc {
   Stream get isLoadingUsers => _isLoadingUsersController.stream;
   Stream get jobs => _jobsController.stream;
 
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+
   /// init home bloc
   init() {
     _activePageController = BehaviorSubject<int>();
@@ -41,6 +45,29 @@ class HomeBloc {
     _usersMetaDataController = BehaviorSubject<MetaData>();
     _usersController = BehaviorSubject<List<User>>();
     _isLoadingUsersController = BehaviorSubject<bool>();
+
+    var initializationSettingsAndroid =
+        AndroidInitializationSettings('flutter_devs');
+    var initializationSettingsIOs = IOSInitializationSettings();
+    var initSetttings = InitializationSettings(
+        android: initializationSettingsAndroid, iOS: initializationSettingsIOs);
+
+    flutterLocalNotificationsPlugin.initialize(initSetttings,
+        onSelectNotification: (String value) {});
+
+    mainBloc.socket.on('notification_${mainBloc.userProfileObject.sId}',
+        (data) {
+      showNotification(data['title'] ?? 'New Message', data['text'] ?? '');
+    });
+  }
+
+  showNotification(String title, String body) async {
+    var android = AndroidNotificationDetails('id', 'channel ', 'description',
+        priority: Priority.high, importance: Importance.max);
+    var iOS = IOSNotificationDetails();
+    var platform = new NotificationDetails(android: android, iOS: iOS);
+    await flutterLocalNotificationsPlugin.show(0, title, body, platform,
+        payload: 'Welcome to the Local Notification demo');
   }
 
   changeActivePage(int index) {
@@ -177,6 +204,7 @@ class HomeBloc {
     _assetsController.close();
     _assetMetaDataController.close();
     _isLoadingAssetsController.close();
+    mainBloc.socket.off('notification_${mainBloc.userProfileObject.sId}');
   }
 
   // logout user
