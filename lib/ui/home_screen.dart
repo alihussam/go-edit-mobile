@@ -68,25 +68,25 @@ class _HomeScreenState extends State<HomeScreen> {
                 homeBloc.changeActivePage(4),
                 GlobalNavigation.key.currentState.pop(),
               }),
-      DrawerMenuOptionModel(
-          'My Assets',
-          Icons.cloud_download,
-          () => {
-                homeBloc.changeActivePage(5),
-                GlobalNavigation.key.currentState.pop(),
-              }),
+      // DrawerMenuOptionModel(
+      //     'My Assets',
+      //     Icons.cloud_download,
+      //     () => {
+      //           homeBloc.changeActivePage(5),
+      //           GlobalNavigation.key.currentState.pop(),
+      //         }),
       DrawerMenuOptionModel(
           'Messages',
           Icons.message,
           () => {
-                homeBloc.changeActivePage(6),
+                homeBloc.changeActivePage(5),
                 GlobalNavigation.key.currentState.pop(),
               }),
       DrawerMenuOptionModel(
           'My Profile',
           Icons.account_circle,
           () => {
-                homeBloc.changeActivePage(7),
+                homeBloc.changeActivePage(6),
                 GlobalNavigation.key.currentState.pop(),
               }),
     ];
@@ -97,7 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
       JobPage(),
       JobHistoryPage(),
       MyJobsPage(),
-      MyAssetsPage(),
+      // MyAssetsPage(),
       ChatPage(),
       ProfilePage(),
     ];

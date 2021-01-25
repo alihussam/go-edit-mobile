@@ -216,8 +216,8 @@ class _ProfilePageState extends State<ProfilePage> with FieldValidators {
                       'Rating', freelancerProfile.rating.toString()),
                   _buildHeaderStatsItem(
                       'Projects', freelancerProfile.projects.toString()),
-                  _buildHeaderStatsItem(
-                      'Assets', freelancerProfile.assets.toString()),
+                  // _buildHeaderStatsItem(
+                  //     'Assets', freelancerProfile.assets.toString()),
                   _buildHeaderStatsItem(
                       'Earning', 'PKR:${freelancerProfile.earning.toString()}'),
                 ],
@@ -248,8 +248,8 @@ class _ProfilePageState extends State<ProfilePage> with FieldValidators {
                     'Rating', employerProfile.rating.toString()),
                 _buildHeaderStatsItem('Projects Completed',
                     employerProfile.projectsCompleted.toString()),
-                _buildHeaderStatsItem(
-                    'Assets Bought', employerProfile.assetsBought.toString()),
+                // _buildHeaderStatsItem(
+                //     'Assets Bought', employerProfile.assetsBought.toString()),
                 _buildHeaderStatsItem(
                     'Spent', 'PKR:${employerProfile.spent.toString()}'),
               ],

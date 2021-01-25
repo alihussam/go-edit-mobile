@@ -92,7 +92,8 @@ class _JobHistoryPageState extends State<JobHistoryPage> {
                 if (snapshot.hasData) {
                   if (snapshot.data.length == 0) {
                     return Center(
-                      child: Text('You have not created any job yet'),
+                      child:
+                          Text('You don\'t have any ongoing or completed job'),
                     );
                   }
                   return ListView.builder(

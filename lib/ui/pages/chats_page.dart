@@ -6,6 +6,7 @@ import 'package:goedit/models/chat.model.dart';
 import 'package:goedit/models/message.dart';
 import 'package:goedit/models/user.dart';
 import 'package:goedit/ui/widgets/cards.dart';
+import 'package:goedit/ui/widgets/inputs/profileview_image_picker.dart';
 import 'package:goedit/ui/widgets/loading.dart';
 import 'package:goedit/utils/global_navigation.dart';
 // import 'package:flutter_chat/chatWidget.dart';
@@ -30,7 +31,15 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     Widget _buildChatTile(Chat chat) {
       return ListTile(
-        leading: buildRoundedCornerImage(imageUrl: chat.user.imageUrl),
+        // leading: buildRoundedCornerImage(imageUrl: chat.user.imageUrl),
+        leading: Container(
+          width: 40,
+          height: 40,
+          child: ProfileViewImagePicker(
+            imageUrl: chat.user.imageUrl,
+            isViewOnly: true,
+          ),
+        ),
         title: Text(
           chat.user.unifiedName,
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
