@@ -290,7 +290,7 @@ Widget buildRatingCard(Rating rating, String cardTitle) {
                       width: 5,
                     ),
                     Text(
-                      rating.user.unifiedName,
+                      rating.user.shortName,
                       style: TextStyle(fontWeight: FontWeight.bold),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -303,7 +303,7 @@ Widget buildRatingCard(Rating rating, String cardTitle) {
                   allowHalfRating: false,
                   itemCount: 5,
                   itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                  itemSize: 18,
+                  itemSize: 12,
                   itemBuilder: (context, _) => Icon(
                     Icons.star,
                     color: Colors.amber,

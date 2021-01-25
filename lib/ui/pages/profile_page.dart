@@ -32,9 +32,8 @@ class _ProfilePageState extends State<ProfilePage> with FieldValidators {
   @override
   void initState() {
     profilePageBloc.init(widget.user);
-    if (widget.user == null) {
-      profilePageBloc.getProfile();
-    }
+    profilePageBloc
+        .getProfile(widget.user != null ? {'user': widget.user.sId} : {});
     super.initState();
   }
 
@@ -461,13 +460,11 @@ class _ProfilePageState extends State<ProfilePage> with FieldValidators {
             SizedBox(
               height: 10,
             ),
-            ...(user.ratings.length <= 0
-                ? List.generate(user.ratings.length, (index) {
-                    {
-                      print('holo');
-                      return buildRatingCard(user.ratings.elementAt(index), '');
-                    }
-                  })
+            ...(user.ratings.length > 0
+                ? List.generate(
+                    user.ratings.length,
+                    (index) =>
+                        buildRatingCard(user.ratings.elementAt(index), ''))
                 : [
                     Text(
                       'You haven\'t been rated yet',
@@ -506,12 +503,12 @@ class _ProfilePageState extends State<ProfilePage> with FieldValidators {
       child: StreamBuilder(
         stream: profilePageBloc.userProfile,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (!snapshot.hasData) {
+          if (!snapshot.hasData || snapshot.hasError) {
             return Center(child: LoadSpinner());
           }
-          if (snapshot.hasError) {
-            return Center(child: Text(snapshot.error));
-          }
+          // if () {
+          //   return Center(child: Text(snapshot.error));
+          // }
           return SingleChildScrollView(
             child: Form(
               key: _formKey,

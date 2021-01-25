@@ -58,7 +58,7 @@ class User {
   }
 
   User.fromJson(Map<String, dynamic> json) {
-    print('[UserModel] fromJson $json');
+    print('[UserModel] fromJson');
     sId = json['_id'];
     name = json['name'] != null ? new Name.fromJson(json['name']) : '';
     email = json['email'];
@@ -81,11 +81,9 @@ class User {
         ? json['portfolioUrls'].cast<String>()
         : [];
     if (json['ratings'] != null) {
-      List<Rating> ratingsList = [];
       for (var entry in json['ratings']) {
         ratings.add(Rating.fromJson(entry));
       }
-      ratings = ratingsList;
     }
   }
 

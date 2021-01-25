@@ -47,7 +47,7 @@ class MainBloc {
           _secureStorage.write(key: 'isOnboardingVisited', value: 'yes');
         });
       } else {
-        var data = await AuthRepo.getProfile();
+        var data = await AuthRepo.getProfile({});
         _userProfileController.sink.add(data['profile']);
         user = data['profile'];
         _authController.sink.add('HOME');

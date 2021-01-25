@@ -37,13 +37,13 @@ class AuthRepo {
   }
 
   /// get profile repo
-  static Future<Map> getProfile() async {
+  static Future<Map> getProfile(Map<String, dynamic> queryParams) async {
     try {
       // add token in headers
       String accessToken = await _secureStorage.read(key: 'accessToken');
       print('access token found in getProfile repo ');
       print(accessToken);
-      var data = await AuthProv.getProfile(accessToken);
+      var data = await AuthProv.getProfile(accessToken, queryParams);
       return data;
     } catch (exc) {
       if (exc is RequestException) {

@@ -40,12 +40,12 @@ class AuthProv {
   }
 
   /// Login user provider
-  static Future<Map> getProfile(String accessToken) async {
+  static Future<Map> getProfile(
+      String accessToken, Map<String, dynamic> queryParams) async {
     try {
-      var data = await RequestClient.get(
-        'auth/getProfile',
-        headers: {'authorization': accessToken},
-      );
+      var data = await RequestClient.get('auth/getProfile',
+          headers: {'authorization': accessToken},
+          queryParams: queryParams != null ? queryParams : {});
       return {'profile': User.fromJson(data['data'])};
     } catch (exc) {
       print('exc here in get profile');

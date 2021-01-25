@@ -75,10 +75,12 @@ class ProfilePageBloc {
     }
   }
 
-  getProfile() async {
+  getProfile(Map<String, dynamic> queryParams) async {
     try {
-      var data = await AuthRepo.getProfile();
+      var data = await AuthRepo.getProfile(queryParams);
       mainBloc.updateUserProfile(data['profile']);
+      print('Ratings :: ');
+      print(data['profile'].ratings.length);
       _userProfileController.sink.add(data['profile']);
     } catch (error, stacktrace) {
       var completer = Completer();
