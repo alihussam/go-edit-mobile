@@ -16,6 +16,7 @@ import 'package:goedit/ui/widgets/loading.dart';
 // import 'package:flutter_tags/flutter_tags.dart';
 import 'package:goedit/utils/field_validators.dart';
 import 'package:goedit/utils/global_navigation.dart';
+import 'package:goedit/ui/widgets/cards.dart';
 
 class ProfilePage extends StatefulWidget {
   final User user;
@@ -180,14 +181,14 @@ class _ProfilePageState extends State<ProfilePage> with FieldValidators {
         children: [
           Text(
             title,
-            style: TextStyle(fontSize: 12),
+            style: TextStyle(fontSize: 10),
           ),
           SizedBox(
             height: 5,
           ),
           Text(
             value,
-            style: TextStyle(fontSize: 18),
+            style: TextStyle(fontSize: 12),
           ),
         ],
       );
@@ -217,6 +218,8 @@ class _ProfilePageState extends State<ProfilePage> with FieldValidators {
                       'Projects', freelancerProfile.projects.toString()),
                   _buildHeaderStatsItem(
                       'Assets', freelancerProfile.assets.toString()),
+                  _buildHeaderStatsItem(
+                      'Earning', 'PKR:${freelancerProfile.earning.toString()}'),
                 ],
               ),
             ],
@@ -247,6 +250,8 @@ class _ProfilePageState extends State<ProfilePage> with FieldValidators {
                     employerProfile.projectsCompleted.toString()),
                 _buildHeaderStatsItem(
                     'Assets Bought', employerProfile.assetsBought.toString()),
+                _buildHeaderStatsItem(
+                    'Spent', 'PKR:${employerProfile.spent.toString()}'),
               ],
             ),
           ]),
@@ -444,6 +449,36 @@ class _ProfilePageState extends State<ProfilePage> with FieldValidators {
       );
     }
 
+    Widget _buildRatingSection(User user) {
+      return Container(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              'My Ratings',
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            ...(user.ratings.length <= 0
+                ? List.generate(user.ratings.length, (index) {
+                    {
+                      print('holo');
+                      return buildRatingCard(user.ratings.elementAt(index), '');
+                    }
+                  })
+                : [
+                    Text(
+                      'You haven\'t been rated yet',
+                      textAlign: TextAlign.center,
+                    ),
+                  ]),
+          ],
+        ),
+      );
+    }
+
     // build profile body
     Widget _buildProfileBody(User user) {
       return Container(
@@ -458,6 +493,10 @@ class _ProfilePageState extends State<ProfilePage> with FieldValidators {
               height: 10,
             ),
             _buildPortfolioSection(user),
+            SizedBox(
+              height: 10,
+            ),
+            _buildRatingSection(user),
           ],
         ),
       );

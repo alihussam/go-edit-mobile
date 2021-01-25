@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:goedit/models/asset.dart';
 import 'package:goedit/models/job.dart';
+import 'package:goedit/models/rating.dart';
 import 'package:goedit/models/user.dart';
 
 Widget buildRoundedCornerImage({
@@ -261,6 +262,63 @@ Widget buildUserTileCard(User user, Function onPress) {
                   ),
                 ],
               ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+Widget buildRatingCard(Rating rating, String cardTitle) {
+  return Card(
+    child: Container(
+      padding: EdgeInsets.all(10),
+      child: Center(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Row(
+                  children: [
+                    buildRoundedCornerImage(
+                        imageUrl: rating.user.imageUrl, height: 45, width: 45),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    Text(
+                      rating.user.unifiedName,
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+                RatingBar.builder(
+                  initialRating: rating.rating,
+                  minRating: 1,
+                  direction: Axis.horizontal,
+                  allowHalfRating: false,
+                  itemCount: 5,
+                  itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                  itemSize: 18,
+                  itemBuilder: (context, _) => Icon(
+                    Icons.star,
+                    color: Colors.amber,
+                  ),
+                  ignoreGestures: true,
+                  onRatingUpdate: (value) {
+                    rating.rating = value;
+                  },
+                ),
+              ],
+            ),
+            SizedBox(height: 10),
+            Text(
+              rating.text,
+              style: TextStyle(fontSize: 10),
             ),
           ],
         ),

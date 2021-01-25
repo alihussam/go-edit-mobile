@@ -6,6 +6,7 @@ class FreelancerProfile {
   int assets;
   String bio;
   List skills;
+  double earning;
 
   FreelancerProfile(
       {this.jobTitle,
@@ -24,6 +25,7 @@ class FreelancerProfile {
     assets = json['assets'];
     bio = json['bio'] ?? '';
     skills = json['skills'];
+    earning = double.parse(json['earning'].toString());
   }
 
   Map<String, dynamic> toJson() {

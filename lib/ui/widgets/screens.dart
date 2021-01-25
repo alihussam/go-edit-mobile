@@ -141,23 +141,23 @@ class _FullWidthFormScreenState extends State<FullWidthFormScreen>
                         _formState.price = double.parse(
                             value.trim(), widget.onValueChange(_formState))
                       }),
-              DropdownButton(
-                  hint: Text('Currency'),
-                  icon: Icon(Icons.money),
-                  isExpanded: true,
-                  value: _formState.currency,
-                  items: ['PKR', 'USD']
-                      .map((e) => DropdownMenuItem(
-                            value: e,
-                            child: Text(e),
-                          ))
-                      .toList(),
-                  onChanged: (value) => {
-                        setState(() {
-                          _formState.currency = value;
-                          widget.onValueChange(_formState);
-                        }),
-                      }),
+              // DropdownButton(
+              //     hint: Text('Currency'),
+              //     icon: Icon(Icons.money),
+              //     isExpanded: true,
+              //     value: _formState.currency,
+              //     items: ['PKR', 'USD']
+              //         .map((e) => DropdownMenuItem(
+              //               value: e,
+              //               child: Text(e),
+              //             ))
+              //         .toList(),
+              //     onChanged: (value) => {
+              //           setState(() {
+              //             _formState.currency = value;
+              //             widget.onValueChange(_formState);
+              //           }),
+              //         }),
               // check if to add cover
               ...(widget.buildImageInput
                   ? [

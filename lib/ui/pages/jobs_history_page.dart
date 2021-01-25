@@ -141,7 +141,7 @@ class _JobHistoryPageState extends State<JobHistoryPage> {
               },
               onCancelled: () => jobHistoryBloc.getAllJobs()),
           _buildJobList(),
-          _buildCreateJobButton(),
+          // _buildCreateJobButton(),
         ],
       ),
     );

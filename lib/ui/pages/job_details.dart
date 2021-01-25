@@ -4,6 +4,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:goedit/blocs/job_details_bloc.dart';
 import 'package:goedit/models/bid.dart';
 import 'package:goedit/models/job.dart';
+import 'package:goedit/models/name.dart';
 import 'package:goedit/models/rating.dart';
 import 'package:goedit/models/user.dart';
 import 'package:goedit/ui/pages/chats_page.dart';
@@ -188,22 +189,22 @@ class _JobDetailsState extends State<JobDetails> with FieldValidators {
                       validator: (value) => validateRequired(value),
                       onChanged: (String value) =>
                           {_myBid.budget = double.parse(value.trim())}),
-                  DropdownButton(
-                      hint: Text('Currency'),
-                      icon: Icon(Icons.money),
-                      isExpanded: true,
-                      value: _myBid.currency,
-                      items: ['PKR', 'USD']
-                          .map((e) => DropdownMenuItem(
-                                value: e,
-                                child: Text(e),
-                              ))
-                          .toList(),
-                      onChanged: (value) => {
-                            setState(() {
-                              _myBid.currency = value;
-                            }),
-                          }),
+                  // DropdownButton(
+                  //     hint: Text('Currency'),
+                  //     icon: Icon(Icons.money),
+                  //     isExpanded: true,
+                  //     value: _myBid.currency,
+                  //     items: ['PKR', 'USD']
+                  //         .map((e) => DropdownMenuItem(
+                  //               value: e,
+                  //               child: Text(e),
+                  //             ))
+                  //         .toList(),
+                  //     onChanged: (value) => {
+                  //           setState(() {
+                  //             _myBid.currency = value;
+                  //           }),
+                  //         }),
                 ],
               ),
             ),
@@ -720,60 +721,48 @@ class _JobDetailsState extends State<JobDetails> with FieldValidators {
       );
     }
 
-    Widget _buildRatingCard(Rating rating, String cardTitle) {
-      return Card(
-        child: Container(
-          padding: EdgeInsets.all(10),
-          child: Center(
-            child: Column(
-              children: [
-                Text(cardTitle),
-                SizedBox(height: 10),
-                RatingBar.builder(
-                  initialRating: rating.rating,
-                  minRating: 1,
-                  direction: Axis.horizontal,
-                  allowHalfRating: false,
-                  itemCount: 5,
-                  itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                  itemSize: 30,
-                  itemBuilder: (context, _) => Icon(
-                    Icons.star,
-                    color: Colors.amber,
-                  ),
-                  ignoreGestures: true,
-                  onRatingUpdate: (value) {
-                    rating.rating = value;
-                  },
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    }
-
     Widget _buildRatingCards(Job _job) {
-      if (_job.status == 'COMPLETED') {
+      if (_job.status != 'COMPLETED') {
         return Container();
       }
-      // first check if opposite user has rated me
-      List<Widget> colChildren = [];
-      if (jobDetailsBloc.getRatingForCurrentUser() != null) {
-        colChildren.add(_buildRatingCard(
-            jobDetailsBloc.getRatingForCurrentUser(), 'Rating For You'));
-        // _buildRatingCard(
-        //                         jobDetailsBloc.hasUserProvidedRating()),
-      }
-      // check if current user has rated
-      if (jobDetailsBloc.hasUserProvidedRating()) {
-        colChildren.add(_buildRatingCard(
-            jobDetailsBloc.getRatingIProvided(), 'Rating You Provided'));
-      } else {
-        colChildren.add(_buildRatingForm());
-      }
+      // // first check if opposite user has rated me
+      // List<Widget> colChildren = [];
+      // if (jobDetailsBloc.getRatingForCurrentUser() != null) {
+      //   colChildren.add(_buildRatingCard(
+      //       jobDetailsBloc.getRatingForCurrentUser(), 'Rating For You'));
+      //   // _buildRatingCard(
+      //   //                         jobDetailsBloc.hasUserProvidedRating()),
+      // }
+      // // check if current user has rated
+      // if (jobDetailsBloc.hasUserProvidedRating()) {
+      //   colChildren.add(_buildRatingCard(
+      //       jobDetailsBloc.getRatingIProvided(), 'Rating You Provided'));
+      // } else {
+      //   colChildren.add(_buildRatingForm());
+      // }
       return Column(
-        children: colChildren,
+        children: [
+          SizedBox(
+            height: 20,
+          ),
+          Text(
+            'Job Ratings',
+            style: TextStyle(fontSize: 18),
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          ...(_job.freelancerRating != null
+              ? [buildRatingCard(_job.freelancerRating, '')]
+              : jobDetailsBloc.isJobOfCurrentUser(_job)
+                  ? [_buildRatingForm()]
+                  : []),
+          ...(_job.employerRating != null
+              ? [buildRatingCard(_job.employerRating, '')]
+              : !jobDetailsBloc.isJobOfCurrentUser(_job)
+                  ? [_buildRatingForm()]
+                  : []),
+        ],
       );
     }
 

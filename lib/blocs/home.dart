@@ -57,11 +57,13 @@ class HomeBloc {
 
     mainBloc.socket.on('notification_${mainBloc.userProfileObject.sId}',
         (data) {
+      print('hahahah');
       showNotification(data['title'] ?? 'New Message', data['text'] ?? '');
     });
   }
 
   showNotification(String title, String body) async {
+    print('hereeeeeeeeeeeeeeeeeeeee');
     var android = AndroidNotificationDetails('id', 'channel ', 'description',
         priority: Priority.high, importance: Importance.max);
     var iOS = IOSNotificationDetails();

@@ -15,7 +15,7 @@ class MainBloc {
   GlobalKey<ScaffoldState> _key;
 
   // configure socket io
-  IO.Socket socket = IO.io('http://192.168.1.101:4041', <String, dynamic>{
+  IO.Socket socket = IO.io('http://192.168.1.106:4041', <String, dynamic>{
     'transports': ['websocket'],
     'autoConnect': false,
   });
