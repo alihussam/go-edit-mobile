@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:goedit/utils/file_helper.dart';
+import 'package:goedit/utils/global_navigation.dart';
+import 'package:photo_view/photo_view.dart';
 
 class GridViewImagePicker extends StatefulWidget {
   final List<String> imageUrls;
@@ -41,26 +43,39 @@ class _GridViewImagePickerState extends State<GridViewImagePicker> {
         children: [
           // first generate widgets for image urls
           ...List.generate(widget.imageUrls.length, (index) {
-            return Container(
-              margin: EdgeInsets.all(10),
-              // semanticContainer: true,
-              // clipBehavior: Clip.antiAliasWithSaveLayer,
-              // child: Image.network(
-              //   widget.imageUrls.elementAt(index),
-              //   fit: BoxFit.fill,
-              // ),
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  fit: BoxFit.fill,
-                  image: NetworkImage(
-                    widget.imageUrls.elementAt(index),
+            return InkWell(
+              onTap: () {
+                GlobalNavigation.key.currentState.push(MaterialPageRoute(
+                    builder: (context) => Scaffold(
+                          body: Container(
+                            child: PhotoView(
+                              imageProvider: NetworkImage(
+                                  widget.imageUrls.elementAt(index)),
+                            ),
+                          ),
+                        )));
+              },
+              child: Container(
+                margin: EdgeInsets.all(10),
+                // semanticContainer: true,
+                // clipBehavior: Clip.antiAliasWithSaveLayer,
+                // child: Image.network(
+                //   widget.imageUrls.elementAt(index),
+                //   fit: BoxFit.fill,
+                // ),
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    fit: BoxFit.fill,
+                    image: NetworkImage(
+                      widget.imageUrls.elementAt(index),
+                    ),
                   ),
                 ),
+                // shape: RoundedRectangleBorder(
+                //   borderRadius: BorderRadius.circular(10.0),
+                // ),
+                // elevation: 5,
               ),
-              // shape: RoundedRectangleBorder(
-              //   borderRadius: BorderRadius.circular(10.0),
-              // ),
-              // elevation: 5,
             );
           }),
           // only spread file upload etc if update mode

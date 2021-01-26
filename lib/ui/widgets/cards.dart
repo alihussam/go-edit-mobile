@@ -4,6 +4,7 @@ import 'package:goedit/models/asset.dart';
 import 'package:goedit/models/job.dart';
 import 'package:goedit/models/rating.dart';
 import 'package:goedit/models/user.dart';
+import 'package:goedit/ui/widgets/inputs/profileview_image_picker.dart';
 
 Widget buildRoundedCornerImage({
   String imageUrl = 'https://uifaces.co/our-content/donated/L7wQctBt.jpg',
@@ -180,63 +181,60 @@ Widget buildAssetTileCard(Asset asset, Function onPress) {
 
 Widget buildUserTileCard(User user, Function onPress) {
   return Card(
-    child: InkWell(
-      onTap: onPress,
-      child: Container(
-        height: 130,
-        padding: EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-              colors: [Color(0xFFdadadf), Color(0xFFe9e9ec).withOpacity(0.5)]),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Container(
-              // padding: EdgeInsets.all(),
-              height: 120,
-              width: 120,
-              child: Card(
-                semanticContainer: true,
-                clipBehavior: Clip.antiAliasWithSaveLayer,
-                child: Image.network(
-                  user.imageUrl,
-                  fit: BoxFit.fill,
+      child: InkWell(
+    onTap: onPress,
+    child: Container(
+      height: 100,
+      padding: EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+            colors: [Color(0xFFdadadf), Color(0xFFe9e9ec).withOpacity(0.5)]),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                height: 60,
+                width: 60,
+                child: ProfileViewImagePicker(
+                  isViewOnly: true,
+                  imageUrl: user.imageUrl,
                 ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                elevation: 5,
-                margin: EdgeInsets.all(10),
               ),
-            ),
-            // SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              SizedBox(width: 10),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Flexible(
-                    child: Text(
-                      user.shortName ?? '',
-                      overflow: TextOverflow.ellipsis,
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        user.unifiedName ?? '',
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        user.freelancerProfile.jobTitle != ''
+                            ? user.freelancerProfile.jobTitle
+                            : '-',
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontSize: 12),
+                      ),
+                    ],
                   ),
-                  // SizedBox(
-                  //   height: 6,
-                  // ),
-                  Text(
-                    user.freelancerProfile.jobTitle != ''
-                        ? user.freelancerProfile.jobTitle
-                        : '(No Job Title)',
-                    overflow: TextOverflow.ellipsis,
+                  SizedBox(
+                    height: 10,
                   ),
-                  // SizedBox(
-                  //   height: 6,
-                  // ),
+                  // ratings
                   Row(
                     children: [
                       RatingBar.builder(
@@ -246,7 +244,7 @@ Widget buildUserTileCard(User user, Function onPress) {
                         allowHalfRating: false,
                         itemCount: 5,
                         itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                        itemSize: 14,
+                        itemSize: 12,
                         itemBuilder: (context, _) => Icon(
                           Icons.star,
                           color: Colors.amber,
@@ -257,17 +255,20 @@ Widget buildUserTileCard(User user, Function onPress) {
                       SizedBox(
                         width: 10,
                       ),
-                      Text('(${user.freelancerProfile.ratingCount})'),
+                      Text(
+                        '(${user.freelancerProfile.ratingCount})',
+                        style: TextStyle(fontSize: 10),
+                      ),
                     ],
                   ),
                 ],
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
+        ],
       ),
     ),
-  );
+  ));
 }
 
 Widget buildRatingCard(Rating rating, String cardTitle) {
@@ -283,42 +284,83 @@ Widget buildRatingCard(Rating rating, String cardTitle) {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    buildRoundedCornerImage(
-                        imageUrl: rating.user.imageUrl, height: 45, width: 45),
-                    SizedBox(
-                      width: 5,
+                    Container(
+                      height: 45,
+                      width: 45,
+                      child: ProfileViewImagePicker(
+                        isViewOnly: true,
+                        imageUrl: rating.user.imageUrl,
+                      ),
                     ),
-                    Text(
-                      rating.user.shortName,
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    SizedBox(width: 5),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          rating.user.shortName,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 12),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Text(
+                          rating.user.freelancerProfile.jobTitle,
+                          style: TextStyle(fontSize: 10),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    )
                   ],
                 ),
-                RatingBar.builder(
-                  initialRating: rating.rating,
-                  minRating: 1,
-                  direction: Axis.horizontal,
-                  allowHalfRating: false,
-                  itemCount: 5,
-                  itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                  itemSize: 12,
-                  itemBuilder: (context, _) => Icon(
-                    Icons.star,
-                    color: Colors.amber,
-                  ),
-                  ignoreGestures: true,
-                  onRatingUpdate: (value) {
-                    rating.rating = value;
-                  },
-                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    RatingBar.builder(
+                      initialRating: rating.rating,
+                      minRating: 1,
+                      direction: Axis.horizontal,
+                      allowHalfRating: false,
+                      itemCount: 5,
+                      itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                      itemSize: 12,
+                      itemBuilder: (context, _) => Icon(
+                        Icons.star,
+                        color: Colors.amber,
+                      ),
+                      ignoreGestures: true,
+                      onRatingUpdate: (value) {
+                        rating.rating = value;
+                      },
+                    ),
+                    Container(
+                      height: 15,
+                      width: 20,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(40),
+                            bottomLeft: Radius.circular(40)),
+                        border: Border.all(
+                          width: 0.4,
+                          color: Colors.amber,
+                          // color: Colors.green,
+                          // style: BorderStyle.solid)),
+                        ),
+                      ),
+                      child: Center(
+                          child: Text(rating.rating.toString(),
+                              style: TextStyle(fontSize: 8))),
+                    ),
+                  ],
+                )
               ],
             ),
-            SizedBox(height: 10),
+            SizedBox(height: 15),
             Text(
               rating.text,
-              style: TextStyle(fontSize: 10),
+              style: TextStyle(fontSize: 12),
             ),
           ],
         ),

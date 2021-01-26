@@ -454,7 +454,7 @@ class _ProfilePageState extends State<ProfilePage> with FieldValidators {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'My Ratings',
+              'Profile Ratings',
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             SizedBox(
@@ -487,9 +487,17 @@ class _ProfilePageState extends State<ProfilePage> with FieldValidators {
               user.freelancerProfile.bio,
             ),
             SizedBox(
+              height: 5,
+            ),
+            Divider(),
+            SizedBox(
               height: 10,
             ),
             _buildPortfolioSection(user),
+            SizedBox(
+              height: 5,
+            ),
+            Divider(),
             SizedBox(
               height: 10,
             ),
@@ -506,9 +514,6 @@ class _ProfilePageState extends State<ProfilePage> with FieldValidators {
           if (!snapshot.hasData || snapshot.hasError) {
             return Center(child: LoadSpinner());
           }
-          // if () {
-          //   return Center(child: Text(snapshot.error));
-          // }
           return SingleChildScrollView(
             child: Form(
               key: _formKey,
