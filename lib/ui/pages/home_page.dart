@@ -1,5 +1,6 @@
 import 'package:flappy_search_bar/flappy_search_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:goedit/blocs/home.dart';
 import 'package:goedit/models/asset.dart';
 import 'package:goedit/models/job.dart';
@@ -72,6 +73,24 @@ class _HomePageState extends State<HomePage> {
                     user.freelancerProfile.jobTitle,
                     overflow: TextOverflow.ellipsis,
                   ),
+                  SizedBox(
+                    height: 4,
+                  ),
+                  RatingBar.builder(
+                    initialRating: user.freelancerProfile.rating,
+                    minRating: 0,
+                    direction: Axis.horizontal,
+                    allowHalfRating: false,
+                    itemCount: 5,
+                    itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                    itemSize: 12,
+                    itemBuilder: (context, _) => Icon(
+                      Icons.star,
+                      color: Colors.amber,
+                    ),
+                    ignoreGestures: true,
+                    onRatingUpdate: null,
+                  ),
                 ],
               ),
             ],
@@ -83,21 +102,35 @@ class _HomePageState extends State<HomePage> {
     _buildHeaderOptions(
       String title,
     ) {
-      return Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            title,
-            style: TextStyle(fontSize: 20),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                title,
+                style: TextStyle(
+                    fontSize: 20,
+                    color: Theme.of(context).primaryColor,
+                    fontWeight: FontWeight.bold),
+              ),
+              InkWell(
+                onTap: () {},
+                child: Text(
+                  '',
+                  style: TextStyle(
+                      fontSize: 14, color: Theme.of(context).primaryColor),
+                ),
+              ),
+            ],
           ),
-          InkWell(
-            onTap: () {},
-            child: Text(
-              '',
-              style: TextStyle(
-                  fontSize: 14, color: Theme.of(context).primaryColor),
-            ),
+          SizedBox(
+            height: 5,
+          ),
+          Divider(
+            thickness: 2,
           ),
         ],
       );
@@ -108,7 +141,7 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _buildHeaderOptions('Top Designers'),
+            _buildHeaderOptions('Top Freelancers'),
             Container(
               margin: EdgeInsets.only(top: 20),
               height: 215,
@@ -148,7 +181,7 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _buildHeaderOptions('Recommended Assets'),
+            _buildHeaderOptions('New Assets'),
             Container(
               margin: EdgeInsets.only(top: 20),
               height: 200,
@@ -200,7 +233,7 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _buildHeaderOptions('Recommended Jobs'),
+            _buildHeaderOptions('New Jobs'),
             Container(
               margin: EdgeInsets.only(top: 20),
               height: 200,
@@ -269,7 +302,9 @@ class _HomePageState extends State<HomePage> {
                       child: Text(
                         'On-Demand Talent',
                         style: TextStyle(
-                            fontSize: 30, fontWeight: FontWeight.bold),
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).primaryColor),
                       ))
                 ],
               ),

@@ -74,6 +74,12 @@ class _MyAppState extends State<MyApp> {
           }
         }
         return Container(
+            decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/images/loader.png"),
+            fit: BoxFit.cover,
+          ),
+        ),
             child: Center(
                 child: SpinKitFadingCube(
           color: Theme.of(context).primaryColor,

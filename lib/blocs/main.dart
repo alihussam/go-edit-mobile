@@ -15,8 +15,8 @@ class MainBloc {
   GlobalKey<ScaffoldState> _key;
 
   // configure socket io
-  IO.Socket socket = IO.io('http://192.168.1.106:4041', <String, dynamic>{
-    // IO.Socket socket = IO.io('https://goedit.herokuapp.com', <String, dynamic>{
+  // IO.Socket socket = IO.io('http://192.168.1.106:4041', <String, dynamic>{
+    IO.Socket socket = IO.io('https://goedit.herokuapp.com', <String, dynamic>{
     'transports': ['websocket'],
     'autoConnect': false,
   });

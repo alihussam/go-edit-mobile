@@ -88,6 +88,7 @@ class _AssetDetailsPageState extends State<AssetDetailsPage>
                 ),
               ],
             ),
+            Divider(),
             SizedBox(
               height: 20,
             ),

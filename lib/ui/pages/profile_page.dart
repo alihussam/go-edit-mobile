@@ -9,6 +9,7 @@ import 'package:goedit/models/freelancerProfile.dart';
 import 'package:goedit/models/name.dart';
 import 'package:goedit/models/user.dart';
 import 'package:goedit/ui/pages/chats_page.dart';
+import 'package:goedit/ui/widgets/curve.dart';
 import 'package:goedit/ui/widgets/inputs.dart';
 import 'package:goedit/ui/widgets/inputs/gridview_image_picker.dart';
 import 'package:goedit/ui/widgets/inputs/profileview_image_picker.dart';
@@ -367,8 +368,8 @@ class _ProfilePageState extends State<ProfilePage> with FieldValidators {
                                 100) {
                               _buildPaymentModal();
                             } else {
-                              profilePageBloc
-                                  .alert('Not enough earnings to withdraw');
+                              profilePageBloc.alert(
+                                  'Not enough earnings to withdraw. Withdraw is possible for value greater than 100');
                             }
                           },
                           padding: EdgeInsets.symmetric(
@@ -408,7 +409,7 @@ class _ProfilePageState extends State<ProfilePage> with FieldValidators {
                       height: 10,
                     ),
                     Text(
-                      bio != null ? bio : '(No Bio Entered)',
+                      bio != null && bio != '' ? bio : '(No Bio Entered)',
                       style: TextStyle(fontSize: 12),
                     ),
                   ],
@@ -552,6 +553,15 @@ class _ProfilePageState extends State<ProfilePage> with FieldValidators {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  // Stack(
+                  //   children: [
+                  //     CurveWidget(
+                  //         250, Theme.of(context).primaryColor.withOpacity(0.7)),
+                  //     _buildProfileHeader(
+                  //       snapshot.data,
+                  //     ),
+                  //   ],
+                  // ),
                   _buildProfileHeader(
                     snapshot.data,
                   ),
@@ -576,6 +586,11 @@ class _ProfilePageState extends State<ProfilePage> with FieldValidators {
               FlatButton(
                   onPressed: () {
                     if (_creditCardFormKey.currentState.validate()) {
+                      if (amount <= 100) {
+                        profilePageBloc.alert(
+                            'Not enough earnings to withdraw. Withdraw is possible for value greater than 100');
+                        return;
+                      }
                       GlobalNavigation.key.currentState.pop();
                       profilePageBloc.withdraw(accountNumber, amount);
                       amount = 0;

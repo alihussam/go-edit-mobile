@@ -44,6 +44,7 @@ Widget buildJobTileCard(Job job, Function onPress) {
                 )
               ],
             ),
+            Divider(),
             Container(
                 height: 65,
                 child: Text(job.description.length <= 100
@@ -141,19 +142,19 @@ Widget buildAssetTileCard(Asset asset, Function onPress) {
                         ),
                       ),
                     ),
-                    Container(
-                      margin: EdgeInsets.only(bottom: 10),
-                      child: RatingBarIndicator(
-                        rating: asset.avgRating,
-                        itemBuilder: (context, index) => Icon(
-                          Icons.star,
-                          color: Colors.amber,
-                        ),
-                        itemCount: 5,
-                        itemSize: 12,
-                        direction: Axis.horizontal,
-                      ),
-                    ),
+                    // Container(
+                    //   margin: EdgeInsets.only(bottom: 10),
+                    //   child: RatingBarIndicator(
+                    //     rating: asset.avgRating,
+                    //     itemBuilder: (context, index) => Icon(
+                    //       Icons.star,
+                    //       color: Colors.amber,
+                    //     ),
+                    //     itemCount: 5,
+                    //     itemSize: 12,
+                    //     direction: Axis.horizontal,
+                    //   ),
+                    // ),
                     Container(
                       margin: EdgeInsets.only(bottom: 10),
                       child: FlatButton(
