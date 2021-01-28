@@ -97,9 +97,9 @@ class RequestClient {
       List<File> files}) async {
     try {
       var req = http.MultipartRequest(
-          'POST', Uri.parse('https://goedit.herokuapp.com/api/${url}'));
-      // 'POST',
-      // Uri.parse('http://192.168.1.106:4041/api/${url}'));
+          // 'POST', Uri.parse('https://goedit.herokuapp.com/api/${url}'));
+          'POST',
+          Uri.parse('http://192.168.1.102:4041/api/${url}'));
 
       if (headers != null) {
         req.headers.addAll(headers);

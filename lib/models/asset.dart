@@ -53,7 +53,7 @@ class Asset {
     isDisabled = json['isDisabled'];
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
-    avgRating = json['avgRating'] != null ? json['avgRating'] : 2.3;
+    avgRating = json['avgRating'] != null ? json['avgRating'] : 0;
   }
 
   Map<String, dynamic> toJson() {

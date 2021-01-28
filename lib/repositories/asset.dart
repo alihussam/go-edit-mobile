@@ -15,6 +15,10 @@ class AssetRepo {
       String accessToken = await _secureStorage.read(key: 'accessToken');
       print('access token found in create asset repo ');
       print(accessToken);
+      var resourceUrl =
+          await AssetProv.singleImageUpload(accessToken, asset.resourceFile);
+
+      asset.resourceUrl = resourceUrl['url'];
       var data = await AssetProv.create(accessToken, asset);
       return data;
     } catch (exc) {

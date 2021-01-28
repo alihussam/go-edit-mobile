@@ -167,10 +167,10 @@ class _FullWidthFormScreenState extends State<FullWidthFormScreen>
                       )
                     ]
                   : []),
-              // BoxedSoloFilePicker(
-              //   placeHolderText: '+ Add resource',
-              //   onFileSelect: onFileSelect,
-              // ),
+              BoxedSoloFilePicker(
+                placeHolderText: '+ Add resource',
+                onFileSelect: onFileSelect,
+              ),
             ],
           ),
         ),

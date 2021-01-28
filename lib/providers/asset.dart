@@ -35,6 +35,29 @@ class AssetProv {
     }
   }
 
+  static Future<Map> singleImageUpload(
+    String accessToken,
+    File file,
+  ) async {
+    try {
+      Map<String, String> headers = {'authorization': accessToken};
+      Map<String, String> body = Map<String, String>();
+      List<File> files = List<File>();
+      files.add(file);
+
+      var data = await RequestClient.postMultiPart('asset/singleImageUpload',
+          headers: headers, files: files);
+
+      return {'url': data['data']};
+    } catch (exc, stacktrace) {
+      var completer = Completer();
+      completer.completeError(exc, stacktrace);
+      print('exc here in create asset');
+      print(exc);
+      throw exc;
+    }
+  }
+
   /// get All asset provider
   static Future<Map> getAll(
       String accessToken, Map<String, dynamic> queryParams) async {
