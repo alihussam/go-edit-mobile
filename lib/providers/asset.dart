@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:goedit/models/asset.dart';
@@ -24,6 +25,26 @@ class AssetProv {
 
       var data = await RequestClient.postMultiPart('asset/create',
           headers: headers, payload: body, files: files);
+
+      return {'asset': Asset.fromJson(data['data'])};
+    } catch (exc, stacktrace) {
+      var completer = Completer();
+      completer.completeError(exc, stacktrace);
+      print('exc here in create asset');
+      print(exc);
+      throw exc;
+    }
+  }
+
+  static Future<Map> buy(
+    String accessToken,
+    String asset,
+  ) async {
+    try {
+      Map<String, String> headers = {'authorization': accessToken};
+
+      var data = await RequestClient.post('asset/buy',
+          headers: headers, jsonEncodedBody: json.encode({'asset': asset}));
 
       return {'asset': Asset.fromJson(data['data'])};
     } catch (exc, stacktrace) {

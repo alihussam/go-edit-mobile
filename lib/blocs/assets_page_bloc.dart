@@ -7,7 +7,7 @@ import 'package:goedit/repositories/asset.dart';
 import 'package:goedit/utils/request_exception.dart';
 import 'package:rxdart/subjects.dart';
 
-class MyAssetsPageBloc {
+class AssetsPageBloc {
   BehaviorSubject<bool> _isLoadingAssetsController;
   BehaviorSubject<MetaData> _assetsMetaDataController;
   BehaviorSubject<List<Asset>> _assetsController;
@@ -36,33 +36,11 @@ class MyAssetsPageBloc {
     _newAssetController.close();
   }
 
-  createAsset(Asset asset) async {
-    try {
-      _isCreatingAssetController.sink.add(true);
-      var data = await AssetRepo.create(asset);
-      _newAssetController.sink.add(data['asset']);
-    } catch (error, stacktrace) {
-      var completer = Completer();
-      completer.completeError(error, stacktrace);
-      if (error is RequestException) {
-        _newAssetController.sink.addError(error.message);
-      } else {
-        _newAssetController.sink.addError(error.toString());
-      }
-    } finally {
-      _isCreatingAssetController.sink.add(false);
-    }
-  }
-
-  resetAssetCreation() => _newAssetController.sink.add(null);
-
   getAllAssets({String searchString, String user, int limit, int page}) async {
     _isLoadingAssetsController.add(true);
     try {
       // construct query first
       Map<String, dynamic> queryParams = {};
-
-      queryParams['user'] = mainBloc.userProfileObject.sId;
       if (searchString != null) queryParams['searchString'] = searchString;
       if (user != null) queryParams['user'] = mainBloc.userProfileObject.sId;
       if (limit != null) queryParams['limit'] = limit;
@@ -101,4 +79,4 @@ class MyAssetsPageBloc {
   alert(String message) => mainBloc.alert(message);
 }
 
-final MyAssetsPageBloc myAssetsPageBloc = MyAssetsPageBloc();
+final AssetsPageBloc assetsPageBloc = AssetsPageBloc();

@@ -18,6 +18,7 @@ class Asset {
   File resourceFile;
   double avgRating;
   bool isCurrentUsersAsset = false;
+  List<String> usersBought;
 
   Asset(
       {this.sId,
@@ -35,6 +36,8 @@ class Asset {
       this.isCurrentUsersAsset});
 
   Asset.fromJson(Map<String, dynamic> json) {
+    print('Deforming asset with bought users');
+    print(json['usersBought']);
     sId = json['_id'];
     title = json['title'];
     description = json['description'];
@@ -54,6 +57,8 @@ class Asset {
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
     avgRating = json['avgRating'] != null ? json['avgRating'] : 0;
+    usersBought =
+        json['usersBought'] != null ? json['usersBought'].cast<String>() : [];
   }
 
   Map<String, dynamic> toJson() {

@@ -161,9 +161,10 @@ Widget buildAssetTileCard(Asset asset, Function onPress) {
                         onPressed: onPress,
                         color: Color(0xFF333738),
                         child: Text(
-                          asset.isCurrentUsersAsset
-                              ? 'View'
-                              : 'Buy ${asset.currency + asset.price.toString()}',
+                          '${asset.currency + asset.price.toString()}',
+                          // asset.isCurrentUsersAsset
+                          //     ? 'View'
+                          //     : 'Buy ${asset.currency + asset.price.toString()}',
                           style: TextStyle(color: Colors.white),
                         ),
                       ),

@@ -53,12 +53,21 @@ class AssetDetailsBloc {
     ));
   }
 
+  isAssetBought() {
+    print('Who bough');
+    print(_asset.usersBought);
+
+    print('what status');
+    print(_asset.usersBought.contains(mainBloc.userProfileObject.sId));
+    return _asset.usersBought.contains(mainBloc.userProfileObject.sId);
+  }
+
   // update profile
-  updateResource(File file) async {
+  buy() async {
     try {
       // _isUpdatingProfileController.sink.add(true);
-      var data = await AssetRepo.updateResource(_asset.sId, file);
-      mainBloc.updateUserProfile(data['profile']);
+      var data = await AssetRepo.buy(_asset.sId);
+      // mainBloc.updateUserProfile(data['profile']);
       // _userProfileController.sink.add(data['profile']);
       getCurrentAsset(_asset.sId);
     } catch (error, stacktrace) {
@@ -74,9 +83,9 @@ class AssetDetailsBloc {
     }
   }
 
-  // isJobOfCurrentUser(Job job) {
-  //   return job.user.sId == mainBloc.userProfileObject.sId;
-  // }
+  isAssetOfCurrentUser() {
+    return _asset.user.sId == mainBloc.userProfileObject.sId;
+  }
 
   // hasUserProvidedRating() {
   //   bool isRatingGiven = false;
@@ -123,6 +132,9 @@ class AssetDetailsBloc {
       print('[ASSET_DETAILS_BLOC]: Getting current job');
       _isTakingActionOnAsset.sink.add(true);
       var data = await AssetRepo.getSingleAsset(jobId);
+      print('FOund assets bought ::: ');
+      _asset = data['asset'];
+      print(data['asset'].usersBought);
       _currentAssetController.sink.add(data['asset']);
     } catch (error, stacktrace) {
       var completer = Completer();

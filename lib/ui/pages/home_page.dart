@@ -142,57 +142,57 @@ class _HomePageState extends State<HomePage> {
       );
     }
 
-    // _buildRecommendedAssets() {
-    //   return Container(
-    //     margin: EdgeInsets.only(top: 10),
-    //     child: Column(
-    //       crossAxisAlignment: CrossAxisAlignment.stretch,
-    //       children: [
-    //         _buildHeaderOptions('Recommended Assets'),
-    //         Container(
-    //           margin: EdgeInsets.only(top: 20),
-    //           height: 200,
-    //           child: StreamBuilder(
-    //             stream: homeBloc.assets,
-    //             builder: (context, snapshot) {
-    //               if (snapshot.hasData) {
-    //                 List<Asset> _assets =
-    //                     snapshot.data != null ? snapshot.data : [];
-    //                 if (_assets.length == 0) {
-    //                   return Center(
-    //                       child:
-    //                           Text('There are currently no assets available'));
-    //                 }
-    //                 return ListView.builder(
-    //                     scrollDirection: Axis.horizontal,
-    //                     itemCount: _assets.length,
-    //                     itemBuilder: (context, index) {
-    //                       return Container(
-    //                         width: MediaQuery.of(context).size.width * 0.9,
-    //                         child: buildAssetTileCard(_assets[index], () {
-    //                           GlobalNavigation.key.currentState.push(
-    //                               MaterialPageRoute(
-    //                                   builder: (context) => AssetDetailsPage(
-    //                                       asset: _assets[index])));
-    //                         }),
-    //                       );
-    //                     });
-    //               }
-    //               if (snapshot.hasError) {
-    //                 return Center(
-    //                   child: Text('Some error occured'),
-    //                 );
-    //               }
-    //               return Center(
-    //                 child: CircularProgressIndicator(),
-    //               );
-    //             },
-    //           ),
-    //         ),
-    //       ],
-    //     ),
-    //   );
-    // }
+    _buildRecommendedAssets() {
+      return Container(
+        margin: EdgeInsets.only(top: 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _buildHeaderOptions('Recommended Assets'),
+            Container(
+              margin: EdgeInsets.only(top: 20),
+              height: 200,
+              child: StreamBuilder(
+                stream: homeBloc.assets,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    List<Asset> _assets =
+                        snapshot.data != null ? snapshot.data : [];
+                    if (_assets.length == 0) {
+                      return Center(
+                          child:
+                              Text('There are currently no assets available'));
+                    }
+                    return ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: _assets.length,
+                        itemBuilder: (context, index) {
+                          return Container(
+                            width: MediaQuery.of(context).size.width * 0.9,
+                            child: buildAssetTileCard(_assets[index], () {
+                              GlobalNavigation.key.currentState.push(
+                                  MaterialPageRoute(
+                                      builder: (context) => AssetDetailsPage(
+                                          asset: _assets[index])));
+                            }),
+                          );
+                        });
+                  }
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text('Some error occured'),
+                    );
+                  }
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      );
+    }
 
     _buildRecommendedJobs() {
       return Container(
@@ -277,7 +277,7 @@ class _HomePageState extends State<HomePage> {
             _buildDesignersGrid(),
             // _buildCategoryGrid(),
             _buildRecommendedJobs(),
-            // _buildRecommendedAssets(),
+            _buildRecommendedAssets(),
           ],
         ),
       ),

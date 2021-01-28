@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:goedit/blocs/home.dart';
+import 'package:goedit/ui/pages/assets_page.dart';
 import 'package:goedit/ui/pages/designers_page.dart';
 import 'package:goedit/ui/pages/home_page.dart';
 import 'package:goedit/ui/pages/jobs_history_page.dart';
@@ -69,24 +70,31 @@ class _HomeScreenState extends State<HomeScreen> {
                 GlobalNavigation.key.currentState.pop(),
               }),
       DrawerMenuOptionModel(
-          'My Assets',
+          'Assets',
           Icons.cloud_download,
           () => {
                 homeBloc.changeActivePage(5),
                 GlobalNavigation.key.currentState.pop(),
               }),
       DrawerMenuOptionModel(
+          'My/Bought Assets',
+          Icons.cloud_download,
+          () => {
+                homeBloc.changeActivePage(6),
+                GlobalNavigation.key.currentState.pop(),
+              }),
+      DrawerMenuOptionModel(
           'Messages',
           Icons.message,
           () => {
-                homeBloc.changeActivePage(6),
+                homeBloc.changeActivePage(7),
                 GlobalNavigation.key.currentState.pop(),
               }),
       DrawerMenuOptionModel(
           'My Profile',
           Icons.account_circle,
           () => {
-                homeBloc.changeActivePage(7),
+                homeBloc.changeActivePage(8),
                 GlobalNavigation.key.currentState.pop(),
               }),
     ];
@@ -97,6 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
       JobPage(),
       JobHistoryPage(),
       MyJobsPage(),
+      AssetsPage(),
       MyAssetsPage(),
       ChatPage(),
       ProfilePage(),

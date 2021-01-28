@@ -3,6 +3,8 @@ import 'package:goedit/blocs/asset_details_bloc.dart';
 import 'package:goedit/models/asset.dart';
 import 'package:goedit/ui/widgets/inputs.dart';
 import 'package:goedit/ui/widgets/loading.dart';
+import 'package:goedit/utils/field_validators.dart';
+import 'package:goedit/utils/global_navigation.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AssetDetailsPage extends StatefulWidget {
@@ -14,8 +16,13 @@ class AssetDetailsPage extends StatefulWidget {
   _AssetDetailsPageState createState() => _AssetDetailsPageState();
 }
 
-class _AssetDetailsPageState extends State<AssetDetailsPage> {
+class _AssetDetailsPageState extends State<AssetDetailsPage>
+    with FieldValidators {
   GlobalKey<ScaffoldState> _key = new GlobalKey<ScaffoldState>();
+  GlobalKey<FormState> _creditCardFormKey = new GlobalKey<FormState>();
+  String ccNumber;
+  String ccHolder;
+  String ccCvv;
 
   @override
   void initState() {
@@ -89,7 +96,8 @@ class _AssetDetailsPageState extends State<AssetDetailsPage> {
               height: 20,
             ),
             // check if asset exist if not show add asset
-            ...(asset.resourceUrl != null
+            ...(assetDetailsBloc.isAssetOfCurrentUser() ||
+                    assetDetailsBloc.isAssetBought()
                 ? [
                     FlatButton(
                         onPressed: () async {
@@ -104,13 +112,15 @@ class _AssetDetailsPageState extends State<AssetDetailsPage> {
                         ))
                   ]
                 : [
-                    SingleImageInput(
-                      onImageSelect: (file) {
-                        assetDetailsBloc.updateResource(file);
-                      },
-                      isShowPlaceHolderImage: false,
-                      placeHolderText: '+ Add asset resource',
-                    ),
+                    FlatButton(
+                        onPressed: () async {
+                          _buildPaymentModal();
+                        },
+                        color: Theme.of(context).primaryColor,
+                        child: Text(
+                          'Buy',
+                          style: TextStyle(color: Colors.white),
+                        ))
                   ]),
           ],
         ),
@@ -143,5 +153,56 @@ class _AssetDetailsPageState extends State<AssetDetailsPage> {
         ),
       ),
     ));
+  }
+
+  _buildPaymentModal() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            actions: [
+              FlatButton(
+                  onPressed: () {
+                    if (_creditCardFormKey.currentState.validate()) {
+                      GlobalNavigation.key.currentState.pop();
+                      assetDetailsBloc.buy();
+                      // jobDetailsBloc.completeJob(ccNumber, ccHolder, ccCvv);
+                    }
+                  },
+                  child: Text('Submit')),
+            ],
+            content: Container(
+              padding: EdgeInsets.symmetric(vertical: 20),
+              child: SingleChildScrollView(
+                child: Form(
+                  key: _creditCardFormKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text('Payment Info'),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      buildFormField(
+                          labelText: 'Credit Card Number',
+                          controller: ccNumberMask,
+                          validator: (value) => ccNumberValidate(value),
+                          onChanged: (value) => ccNumber = value.trim()),
+                      buildFormField(
+                          labelText: 'Card Holder Name',
+                          validator: (value) => validateRequired(value),
+                          onChanged: (value) => ccHolder = value.trim()),
+                      buildFormField(
+                          labelText: 'CVV',
+                          validator: (value) => ccCvvValidate(value),
+                          controller: ccCvvMask,
+                          onChanged: (value) => ccCvv = value.trim()),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        });
   }
 }
