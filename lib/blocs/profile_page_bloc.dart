@@ -113,6 +113,28 @@ class ProfilePageBloc {
       _isUpdatingProfileController.sink.add(false);
     }
   }
+
+  withdraw(String accountNumber, double amount) async {
+    try {
+      _isUpdatingProfileController.sink.add(true);
+      var data = await UserRepo.withdraw(amount);
+      print('Data found');
+      print(data['profile']);
+      mainBloc.updateUserProfile(data['profile']);
+      _userProfileController.sink.add(data['profile']);
+      _isUpdatingProfileController.sink.add(false);
+      _isUpdateModeOnController.sink.add(false);
+    } catch (error, stacktrace) {
+      var completer = Completer();
+      completer.completeError(error, stacktrace);
+      if (error is RequestException) {
+        alert(error.message);
+      } else {
+        alert(error.toString());
+      }
+      _isUpdatingProfileController.sink.add(false);
+    }
+  }
 }
 
 final profilePageBloc = new ProfilePageBloc();

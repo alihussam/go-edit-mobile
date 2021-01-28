@@ -27,7 +27,10 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> with FieldValidators {
   GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
+  GlobalKey<FormState> _creditCardFormKey = new GlobalKey<FormState>();
   User updatedProfile = new User();
+  String accountNumber;
+  double amount;
 
   @override
   void initState() {
@@ -349,6 +352,35 @@ class _ProfilePageState extends State<ProfilePage> with FieldValidators {
                   height: 20,
                 ),
                 _buildUserStats(user),
+                SizedBox(
+                  height: 20,
+                ),
+                // if current user show withdraw earning button
+                ...(widget.user == null ||
+                        profilePageBloc.isCurrentUser(widget.user.sId)
+                    ? [
+                        FlatButton(
+                          color: Theme.of(context).primaryColor,
+                          onPressed: () {
+                            if (user.freelancerProfile.earning -
+                                    user.freelancerProfile.withdrawn >
+                                100) {
+                              _buildPaymentModal();
+                            } else {
+                              profilePageBloc
+                                  .alert('Not enough earnings to withdraw');
+                            }
+                          },
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 40, vertical: 10),
+                          child: Text(
+                            'Withdraw Remaining Earnings \n Rs: ${user.freelancerProfile.earning - user.freelancerProfile.withdrawn}',
+                            style: TextStyle(color: Colors.white),
+                            textAlign: TextAlign.center,
+                          ),
+                        )
+                      ]
+                    : []),
               ],
             ),
           )
@@ -533,5 +565,53 @@ class _ProfilePageState extends State<ProfilePage> with FieldValidators {
         },
       ),
     );
+  }
+
+  _buildPaymentModal() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            actions: [
+              FlatButton(
+                  onPressed: () {
+                    if (_creditCardFormKey.currentState.validate()) {
+                      GlobalNavigation.key.currentState.pop();
+                      profilePageBloc.withdraw(accountNumber, amount);
+                      amount = 0;
+                      accountNumber = '';
+                    }
+                  },
+                  child: Text('Submit')),
+            ],
+            content: Container(
+              padding: EdgeInsets.symmetric(vertical: 20),
+              child: SingleChildScrollView(
+                child: Form(
+                  key: _creditCardFormKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text('Withdraw info'),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      buildFormField(
+                          labelText: 'Account Number',
+                          controller: accNumberMask,
+                          validator: (value) => accNumberValidate(value),
+                          onChanged: (value) => accountNumber = value.trim()),
+                      buildNumericOnlyFormField(
+                          labelText: 'Amount',
+                          validator: (value) => validateRequired(value),
+                          onChanged: (String value) =>
+                              {amount = double.parse(value.trim())}),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        });
   }
 }

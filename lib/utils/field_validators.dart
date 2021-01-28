@@ -38,6 +38,11 @@ mixin FieldValidators {
     return null;
   }
 
+  String accNumberValidate(String value) {
+    if (value.trim().length != 17) return "Enter valid account number";
+    return null;
+  }
+
   String ccCvvValidate(String value) {
     if (value.trim().length != 5) return "Enter valid cvv";
     return null;
@@ -52,6 +57,7 @@ mixin FieldValidators {
   // }
 
   var ccNumberMask = new MaskedTextController(mask: '0000-0000-0000-0000');
+  var accNumberMask = new MaskedTextController(mask: '00000000000000000');
   var ccCvvMask = new MaskedTextController(mask: '00/00');
   // var phoneMask = new MaskedTextController(mask: '00000000000');
 }

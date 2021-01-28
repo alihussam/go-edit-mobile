@@ -78,6 +78,23 @@ class UserProv {
     }
   }
 
+  /// Update user profile provider
+  static Future<Map> withdraw(String accessToken, double amount) async {
+    try {
+      Map<String, String> headers = {'authorization': accessToken};
+
+      var data = await RequestClient.post('user/withdraw',
+          headers: headers, jsonEncodedBody: json.encode({'amount': amount}));
+
+      return {'profile': User.fromJson(data['data'])};
+    } catch (exc) {
+      print('exc here in update profile provider');
+      print(exc.toString());
+      if (exc.message != null) print(exc.message);
+      throw exc;
+    }
+  }
+
   /// get All asset provider
   static Future<Map> getAll(
       String accessToken, Map<String, dynamic> queryParams) async {

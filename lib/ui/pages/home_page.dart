@@ -249,7 +249,31 @@ class _HomePageState extends State<HomePage> {
       padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
       child: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
+            Container(
+              // decoration: BoxDecoration(
+              //   gradient: LinearGradient(colors: [
+              //     Theme.of(context).primaryColor,
+              //     Theme.of(context).primaryColor.withOpacity(0.2)
+              //   ]),
+              // ),
+              height: 200,
+              padding: EdgeInsets.only(bottom: 10),
+              child: Stack(
+                children: [
+                  Image.asset('assets/images/home_header.png'),
+                  Positioned(
+                      bottom: 5,
+                      right: 2,
+                      child: Text(
+                        'On-Demand Talent',
+                        style: TextStyle(
+                            fontSize: 30, fontWeight: FontWeight.bold),
+                      ))
+                ],
+              ),
+            ),
             _buildDesignersGrid(),
             // _buildCategoryGrid(),
             _buildRecommendedJobs(),
